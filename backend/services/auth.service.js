@@ -4,6 +4,7 @@ import sendEmail from '../config/sendEmail.js';
 import OTPSendingTemplate from '../utils/OTPSendingTemplate.js';
 
 
+
 export const signUpService = async (payload) => {
     const {name, email, password } = payload;
 
@@ -96,4 +97,36 @@ export const forgetPasswordRequestService = async (payload) => {
             otp : user.otp
         }),
     })
+}
+
+export const verifyOTPService = async (payload) => {
+    const { email, otp } = payload;
+
+    if(!email || !otp) {
+        throw new Error('Email and OTP are required');
+    }
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+        throw new Error('User not found');
+    }
+
+    if (user.otp !== otp) {
+        throw new Error('Invalid OTP');
+    }
+
+    if (user.otpExpiry < Date.now()) {
+        throw new Error('OTP expired');
+    }
+
+    //remove OTP and expiry time after successful verification
+    await UserModel.findByIdAndUpdate(user._id, {
+            otp: "",
+            otpExpiry: ""
+        }
+    );
+
+    return {
+        success: true,
+    }
 }
