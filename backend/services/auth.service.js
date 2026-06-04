@@ -1,5 +1,7 @@
 import bcrypt from 'bcryptjs';
 import UserModel from '../models/user.model.js';
+import sendEmail from '../config/sendEmail.js';
+import OTPSendingTemplate from '../utils/OTPSendingTemplate.js';
 
 
 export const signUpService = async (payload) => {
@@ -62,4 +64,36 @@ export const loginService = async (payload) => {
             email: user.email,
         }
     }
+}
+
+export const forgetPasswordRequestService = async (payload) => {
+    const { email } = payload;
+
+    if (!email) {
+        throw new Error('Email is required');
+    }
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+        throw new Error('User not found');
+    }
+
+    // Generate OTP and set expiry time
+    user.otp = Math.floor(100000 + Math.random() * 900000).toString();
+    user.otpExpiry = Date.now() + 5 * 60 * 1000;
+
+    await UserModel.findByIdAndUpdate(user._id, {
+         otp: user.otp,
+         otpExpiry: user.otpExpiry 
+    });
+
+    //after save into database now send email
+    await sendEmail({
+        sendTo : email,
+        subject : "Forgot Password OTP from VR Application",
+        html : OTPSendingTemplate({
+            name : user.name,
+            otp : user.otp
+        }),
+    })
 }
