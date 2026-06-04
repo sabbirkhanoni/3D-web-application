@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import connectDB from './config/connectDB.js';
+import authRoute from './routes/auth.route.js';
 
 dotenv.config();
 const app = express();
@@ -16,7 +17,9 @@ app.use(cors({
     origin: ORIGIN
 }))
 
+//body parser middleware
 app.use(express.json())
+//morgan middleware for logging
 app.use(morgan('dev'))
 
 app.get("/", (request, response) => {
@@ -24,6 +27,11 @@ app.get("/", (request, response) => {
         message: `Welcome to the 3D VR Application Backend API!, Backend is running on ${PORT}.`
     })
 })
+
+// Routes
+app.use('/api/auth', authRoute);
+
+
 
 // First Connect to MongoDB then start the server
 connectDB().then(() => {
