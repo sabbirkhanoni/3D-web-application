@@ -130,3 +130,24 @@ export const verifyOTPService = async (payload) => {
         success: true,
     }
 }
+
+export const resetPasswordService = async (payload) => {
+    const { email, newPassword } = payload;
+
+    if (!email || !newPassword) {
+        throw new Error('Email and new password are required');
+    }
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+        throw new Error('User not found');
+    }
+
+    // Hash the new password before saving to the database
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    return await UserModel.findByIdAndUpdate(user._id, {
+        password: hashedPassword,
+    });
+}

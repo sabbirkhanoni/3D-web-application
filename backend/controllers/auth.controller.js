@@ -1,5 +1,11 @@
 import { request } from 'express';
-import { signUpService, loginService, forgetPasswordRequestService, verifyOTPService } from '../services/auth.service.js';
+import {
+    signUpService,
+    loginService,
+    forgetPasswordRequestService,
+    verifyOTPService,
+    resetPasswordService
+} from '../services/auth.service.js';
 
 export const signUpController = async (request, response) => {
     try {
@@ -83,6 +89,24 @@ export const verifyOTPController = async (request, response) => {
     } catch (error) {
         return response.status(400).json({
             message: 'OTP verification failed',
+            error: error.message,
+            success: false,
+        })
+    }
+}
+
+
+export const resetPasswordController = async (request, response) => {
+    try {
+        await resetPasswordService(request.body);
+        return response.status(200).json({
+            message: 'Password reset successfully',
+            error: null,
+            success: true,
+        })
+    } catch (error) {
+        return response.status(400).json({
+            message: 'Password reset failed',
             error: error.message,
             success: false,
         })
