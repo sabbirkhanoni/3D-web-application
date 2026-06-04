@@ -1,19 +1,39 @@
-import { signUpUserService } from '../services/auth.service.js';
+import { request } from 'express';
+import { signUpService, loginService } from '../services/auth.service.js';
 
-export const signUpUserController = async (request, response) => {
+export const signUpController = async (request, response) => {
     try {
-        await signUpUserService(request.body);
+        await signUpService(request.body);
         return response.status(201).json({
-            message: 'User created successfully',
+            message: 'Registration successfully',
             error: null,
             success: true,
         })
     } catch (error) {
         return response.status(400).json({
-            message: 'User creation failed',
+            message: 'Registration failed',
             error: error.message,
             success: false,
         })
     }
 }
 
+export const loginController = async (request, response) => {
+    try {
+        const user = await loginService(request.body);
+
+        // Store user ID in session
+        request.session.userId = user.user._id;
+        return response.status(200).json({
+            message: 'Login successfully',
+            error: null,
+            success: true,
+        })
+    } catch (error) {
+        return response.status(400).json({
+            message: 'Login failed',
+            error: error.message,
+            success: false,
+        })
+    }
+}

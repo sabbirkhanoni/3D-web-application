@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import UserModel from '../models/user.model.js';
 
 
-export const signUpUserService = async (payload) => {
+export const signUpService = async (payload) => {
     const {name, email, password } = payload;
 
     if (!name || !email || !password) {
@@ -34,4 +34,32 @@ export const signUpUserService = async (payload) => {
         password: hashedPassword,
     });
     await newUser.save();
+}
+
+export const loginService = async (payload) => {
+    const { email, password } = payload;
+
+    if (!email || !password) {
+        throw new Error('Email and password are required');
+    }
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+        throw new Error('User not found');
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+        throw new Error('Invalid password');
+    }
+
+
+    // Return user data without hashed password
+    return {
+        user: {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+        }
+    }
 }

@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import connectDB from './config/connectDB.js';
 import authRoute from './routes/auth.route.js';
+import session from 'express-session';
 
 dotenv.config();
 const app = express();
@@ -21,6 +22,17 @@ app.use(cors({
 app.use(express.json())
 //morgan middleware for logging
 app.use(morgan('dev'))
+
+//session middleware
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'default_secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        secure: false, // true in production (HTTPS)
+    }
+}));
 
 app.get("/", (request, response) => {
     response.json({
