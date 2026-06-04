@@ -37,3 +37,20 @@ export const loginController = async (request, response) => {
         })
     }
 }
+
+export const logoutController = (request, response) => {
+    request.session.destroy((err) => {
+        if (err) {
+            return response.status(500).json({
+                message: 'Logout failed',
+                error: err.message,
+                success: false,
+            });
+        }
+        return response.status(200).json({
+            message: 'Logout successful',
+            error: null,
+            success: true,
+        });
+    });
+}
