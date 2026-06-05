@@ -1,12 +1,16 @@
 import { Toaster } from "react-hot-toast";
 import { Outlet } from "react-router-dom";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
 function App() {
 
   return (
     <>
-     <main className="min-h-[78vh] lg:px-5 lg:pb-5">
+    <Header />
+     <main>
         <Outlet />
      </main>
+     <Footer />
 
       <Toaster
         position="top-center"
