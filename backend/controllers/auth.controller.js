@@ -12,13 +12,13 @@ export const signUpController = async (request, response) => {
         await signUpService(request.body);
         return response.status(201).json({
             message: 'Registration successfully',
-            error: null,
+            error: false,
             success: true,
         })
     } catch (error) {
         return response.status(400).json({
-            message: 'Registration failed',
-            error: error.message,
+            message: error.message || 'Registration failed',
+            error: false,
             success: false,
         })
     }
@@ -32,13 +32,13 @@ export const loginController = async (request, response) => {
         request.session.userId = user.user._id;
         return response.status(200).json({
             message: 'Login successfully',
-            error: null,
+            error: false,
             success: true,
         })
     } catch (error) {
         return response.status(400).json({
-            message: 'Login failed',
-            error: error.message,
+            message: error.message || 'Login failed',
+            error: true,
             success: false,
         })
     }
@@ -48,14 +48,14 @@ export const logoutController = (request, response) => {
     request.session.destroy((err) => {
         if (err) {
             return response.status(500).json({
-                message: 'Logout failed',
-                error: err.message,
+                message: err.message ||'Logout failed',
+                error: true,
                 success: false,
             });
         }
         return response.status(200).json({
             message: 'Logout successful',
-            error: null,
+            error: false,
             success: true,
         });
     });
@@ -66,13 +66,13 @@ export const forgetPasswordRequestController = async (request, response) => {
         await forgetPasswordRequestService(request.body);
         return response.status(200).json({
             message: 'OTP sent to your email successfully',
-            error: null,
+            error: false,
             success: true,
         })
     } catch (error) {
         return response.status(400).json({
-            message: 'Forget password request failed',
-            error: error.message,
+            message: error.message ||'Forget password request failed',
+            error: true,
             success: false,
         })
     }
@@ -83,13 +83,13 @@ export const verifyOTPController = async (request, response) => {
         await verifyOTPService(request.body);
         return response.status(200).json({
             message: 'OTP verified successfully',
-            error: null,
+            error: false,
             success: true,
         })
     } catch (error) {
         return response.status(400).json({
-            message: 'OTP verification failed',
-            error: error.message,
+            message: error.message || 'OTP verification failed',
+            error: true,
             success: false,
         })
     }
@@ -101,13 +101,13 @@ export const resetPasswordController = async (request, response) => {
         await resetPasswordService(request.body);
         return response.status(200).json({
             message: 'Password reset successfully',
-            error: null,
+            error: false,
             success: true,
         })
     } catch (error) {
         return response.status(400).json({
-            message: 'Password reset failed',
-            error: error.message,
+            message: error.message || 'Password reset failed',
+            error: true,
             success: false,
         })
     }
