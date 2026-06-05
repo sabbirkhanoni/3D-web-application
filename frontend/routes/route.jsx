@@ -4,6 +4,8 @@ import LandingPage from "../pages/LandingPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import SignupPage from "../pages/SignupPage";
 import LoginPage from "../pages/LoginPage";
+import ProtectRoute from "../layouts/ProtectRoute";
+import Dashboard from "../layouts/Dashboard";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +24,14 @@ const router = createBrowserRouter([
         path: "login",
         element: <LoginPage />,
       },
+      {
+        path: "dashboard",
+        element: (
+            <ProtectRoute>
+                <Dashboard />
+            </ProtectRoute>
+        )
+      }
     ],
   },
   {

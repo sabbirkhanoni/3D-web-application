@@ -61,6 +61,31 @@ export const logoutController = (request, response) => {
     });
 }
 
+export const getMeController = async (request, response) => {
+    try {
+        const userId = request.session.userId;
+        if (!userId) {
+            return response.status(401).json({
+                message: 'Unauthorized, Please login to access this resource',
+                error: true,
+                success: false,
+            });
+        }
+        return response.status(200).json({
+            message: 'User authenticated',
+            error: false,
+            success: true,
+            userId: userId,
+        });
+    } catch (error) {
+        return response.status(500).json({
+            message: error.message || 'Failed to authenticate user',
+            error: true,
+            success: false,
+        });
+    }
+}
+
 export const forgetPasswordRequestController = async (request, response) => {
     try {
         await forgetPasswordRequestService(request.body);
