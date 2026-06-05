@@ -52,9 +52,7 @@ const SignupPage = () => {
       password: data.password,
     });
 
-    console.log(response.data)
     if(response.data.success){
-    
       toast.success(response.data.message)
       setData({
         name: "",
@@ -187,8 +185,7 @@ const SignupPage = () => {
                       placeholder="Confirm Password"
                       value={data.confirmPassword}
                       onChange={handleChange}
-                      required
-                      minLength={8}
+                      minLength={6}
                     />
                     <button
                       type="button"
@@ -206,7 +203,7 @@ const SignupPage = () => {
 
                 <button disabled={!validValueOfEveryInput}
                   type="submit"
-                  className= {` ${validValueOfEveryInput ? "from-blue-600 via-indigo-600 to-purple-600 text-white" : "bg-blue-300 hover:bg-blue-400"} w-full bg-gradient-to-r py-3 px-4 rounded-xl hover:opacity-90 focus:ring-4 focus:ring-blue-200 transition-all duration-200 font-medium transform hover:scale-[1.02] active:scale-[0.98] shadow-lg`}
+                  className= {` ${validValueOfEveryInput ? "from-blue-600 via-indigo-600 to-purple-600 text-white" : "bg-gray-400 hover:bg-gray-500"} w-full bg-gradient-to-r py-3 px-4 rounded-xl hover:opacity-90 focus:ring-4 focus:ring-blue-200 transition-all duration-200 font-medium transform hover:scale-[1.02] active:scale-[0.98] shadow-lg`}
                 >
                   Create Account
                 </button>
