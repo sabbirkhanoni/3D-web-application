@@ -5,10 +5,13 @@ import Stat from '../components/landing/Stat';
 import FeatureCard from '../components/landing/FeatureCard';
 import TestimonialCard from '../components/landing/TestimonialCard';
 import FAQItem from '../components/landing/FAQItem';
+import Header from '../components/Header';
 
 
 const LandingPage = () => {
   return (
+    <section>
+        <Header />
     <div className="bg-[#05060f] min-h-screen overflow-x-hidden">
       {/* HERO */}
       <section className=" min-h-screen flex flex-col items-center justify-center text-center px-6 pt-20 mt-10">
@@ -34,7 +37,7 @@ const LandingPage = () => {
           production-ready scenes drag, drop, save, reload. No install required.
         </p>
 
-        {/* CTAs */}
+
         <div className="flex flex-wrap gap-4 mt-10 justify-center animate-fade-up [animation-delay:300ms] [animation-fill-mode:both]">
           <Link to="/register">
             <button className="px-8 py-3.5 text-base bg-white text-gray-900 rounded-full hover:bg-gray-100 transition">
@@ -160,6 +163,7 @@ const LandingPage = () => {
         </div>
       </section>
     </div>
+    </section>
   );
 };
 
