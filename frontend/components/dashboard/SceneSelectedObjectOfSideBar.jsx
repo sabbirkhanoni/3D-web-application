@@ -18,7 +18,7 @@ const OBJECT_ICONS = {
 };
 
 const SceneSelectedObjectOfSideBar = ({ object, isSelected, onSelect }) => {
-  const icon = OBJECT_ICONS[object.type] ?? OBJECT_ICONS.box;
+  const icon = OBJECT_ICONS[object.type] || OBJECT_ICONS.box;
 
   return (
     <li>

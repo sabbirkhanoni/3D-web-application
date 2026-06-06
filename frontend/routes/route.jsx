@@ -6,6 +6,7 @@ import SignupPage from "../pages/SignupPage";
 import LoginPage from "../pages/LoginPage";
 import ProtectRoute from "../layouts/ProtectRoute";
 import Dashboard from "../layouts/Dashboard";
+import SceneViewRoomPage from "../pages/SceneViewRoomPage";
 
 const router = createBrowserRouter([
   {
@@ -30,7 +31,13 @@ const router = createBrowserRouter([
             <ProtectRoute>
                 <Dashboard />
             </ProtectRoute>
-        )
+        ),
+        children: [
+          {
+            path: "view-room",
+            element: <SceneViewRoomPage />,
+          },
+        ],
       }
     ],
   },
