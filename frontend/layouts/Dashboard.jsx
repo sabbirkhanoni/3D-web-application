@@ -1,21 +1,19 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import SideBar from "../components/SideBar";
+import TopBar from "../components/TopBar";
 
 const Dashboard = () => {
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <aside className="w-64 bg-gray-900 text-white p-4">
-        <h2 className="text-xl font-bold mb-6">Dashboard</h2>
+    <div className="flex flex-col h-screen bg-[#0a0b1a] overflow-hidden">
+      <TopBar />
+ 
+      <div className="flex flex-1 overflow-hidden">
+        <SideBar />
 
-        <nav className="flex flex-col gap-3">
-          <Link to="/dashboard">Home</Link>
-        </nav>
-      </aside>
-
-      {/* content */}
-      <main className="flex-1 p-6 bg-gray-100">
-        <Outlet />
-      </main>
+        <main className="flex-1 overflow-y-auto bg-[#0d0e24]">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 };
