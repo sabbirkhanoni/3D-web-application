@@ -16,15 +16,19 @@ const TopBar = () => {
       <div className="flex items-center gap-4">
         {/* User avatar */}
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-violet-500 flex items-center justify-center text-white text-xs font-semibold uppercase select-none">
-            {"AC"}
+          <div className="flex items-center gap-2 mr-5">
+            <div className="w-8 h-8 rounded-full bg-violet-500 flex items-center justify-center text-white text-xs font-semibold uppercase select-none border-3 border-white">
+              {"AC"}
+            </div>
+            <span className="text-white text-xs font-medium">User</span>
           </div>
 
           <button
             onClick={handleLogout}
-            className="text-sm text-black hover:text-black border cursor-pointer border-red-600 hover:border-white/40 rounded-lg px-3 py-1.5 transition-all duration-150 bg-red-200"
+            className="    bg-red-300 hover:bg-red-500 hover:text-white border border-red-500/30 hover:border-red-500/50
+                           text-red-900 text-sm font-medium rounded-lg p-2 transition-all duration-600 cursor-pointer"
           >
-            Logout
+            Sign out
             <RiLogoutCircleRFill className="inline-block ml-1" />
           </button>
         </div>
