@@ -18,7 +18,7 @@ const SceneRoom = () => {
       1000,
     );
 
-    camera.position.set(0, 20, 47);
+    camera.position.set(0, 20, 50);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
@@ -37,6 +37,50 @@ const SceneRoom = () => {
     // grid floor
     const grid = new THREE.GridHelper(50, 50);
     scene.add(grid);
+
+      // left wall material
+    const leftWallMaterial = new THREE.MeshStandardMaterial({
+      color: 0xb44745,
+      side: THREE.DoubleSide,
+    });
+
+    // right wall material
+    const rightWallMaterial = new THREE.MeshStandardMaterial({
+      color: 0xb44745,
+      side: THREE.DoubleSide,
+    });
+
+    // back wall material
+    const backWallMaterial = new THREE.MeshStandardMaterial({
+      color: 0xdedcd8,
+      side: THREE.DoubleSide,
+    });
+
+    // back wall
+    const backWall = new THREE.Mesh(
+      new THREE.PlaneGeometry(50, 15),
+      backWallMaterial
+    );
+    backWall.position.set(0, 7.5, -25);
+    scene.add(backWall);
+
+    // left wall
+    const leftWall = new THREE.Mesh(
+      new THREE.PlaneGeometry(50, 15),
+      leftWallMaterial
+    );
+    leftWall.rotation.y = Math.PI / 2;
+    leftWall.position.set(-25, 7.5, 0);
+    scene.add(leftWall);
+
+    // right wall
+    const rightWall = new THREE.Mesh(
+      new THREE.PlaneGeometry(50, 15),
+      rightWallMaterial
+    );
+    rightWall.rotation.y = -Math.PI / 2;
+    rightWall.position.set(25, 7.5, 0);
+    scene.add(rightWall);
 
     // cube
     const cube = new THREE.Mesh(
