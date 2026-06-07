@@ -26,22 +26,6 @@ const SelectedObjectPositionDetailsOfSideBar = (props) => {
           />
         ))}
       </div>
-
-      
-      <button
-        onClick={() => deleteObject(selected.id)}
-        className="
-          w-full flex items-center justify-center gap-2
-          bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 hover:border-red-500/50
-          text-red-400 text-sm font-medium rounded-lg py-2
-          transition-all duration-150 cursor-pointer
-        "
-      >
-        <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={1.5}>
-          <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-        Delete Object
-      </button>
     </div>
   );
 };
