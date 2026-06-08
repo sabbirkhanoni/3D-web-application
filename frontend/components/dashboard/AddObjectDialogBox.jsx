@@ -6,7 +6,7 @@ const AddObjectDialogBox = (props) => {
   const { onClose, onAddObject } = props;
   const [selectedObject, setSelectedObject] = useState("Cube");
 
-  const objects = ["Cube", "Sphere", "Chair", "Table", "Sofa", "Refrigerator", "Bed"];
+  const objects = ["Cube", "Sphere", "Wardrobe", "Table", "Sofa", "Refrigerator", "Bed"];
 
   const handleAddObjectToScene = () => {
     onAddObject(selectedObject);

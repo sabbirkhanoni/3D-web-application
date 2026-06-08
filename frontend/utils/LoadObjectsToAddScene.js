@@ -1,29 +1,26 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
-import BigSizeSofa from "/models/BigSizeSofa.glb?url";
+import BigSizeSofa from "/models/sofa1.glb?url";
 import TableModel from "/models/table.glb?url";
-import SofaModel from "/models/sofa_chair.glb?url";
-import BedModel from "/models/bed.glb?url";
+import WardrobeModel from "/models/Wardrobe.glb?url";
+import BedModel from "/models/old_bed.glb?url";
 import RefrigeratorModel from "/models/fridge.glb?url";
 
 const loader = new GLTFLoader();
 
-export const addObjectToScene = (
-  object,
-  scene,
-  objectsRef
-) => {
+export const addObjectToScene = (object, scene, objectsRef) => {
   const randomX = Math.round(Math.random() * 20 - 10);
   const randomZ = Math.round(Math.random() * 20 - 10);
 
-  const addModel = (path, scale) => {
+  const addModel = (path, scale, floorY = 0) => {
     loader.load(path, (gltf) => {
       const model = gltf.scene;
 
       model.userData.id = object.id;
+      model.userData.floorY = floorY; 
       model.scale.set(scale, scale, scale);
-      model.position.set(randomX, 0, randomZ);
+      model.position.set(randomX, floorY, randomZ);
 
       scene.add(model);
       objectsRef.current.push(model);
@@ -38,6 +35,7 @@ export const addObjectToScene = (
       );
 
       cube.userData.id = object.id;
+      cube.userData.floorY = 2; 
       cube.position.set(randomX, 2, randomZ);
 
       scene.add(cube);
@@ -52,6 +50,7 @@ export const addObjectToScene = (
       );
 
       sphere.userData.id = object.id;
+      sphere.userData.floorY = 2;
       sphere.position.set(randomX, 2, randomZ);
 
       scene.add(sphere);
@@ -59,24 +58,24 @@ export const addObjectToScene = (
       break;
     }
 
-    case "Chair":
-      addModel(SofaModel, 4);
+    case "Wardrobe":
+      addModel(WardrobeModel, 4, 0);
       break;
 
     case "Table":
-      addModel(TableModel, 2);
+      addModel(TableModel, 3, 0);
       break;
 
     case "Sofa":
-      addModel(BigSizeSofa, 7);
+      addModel(BigSizeSofa, 7, 0);
       break;
 
     case "Bed":
-      addModel(BedModel, 1.5);
+      addModel(BedModel, 8, 0);
       break;
 
     case "Refrigerator":
-      addModel(RefrigeratorModel, 3);
+      addModel(RefrigeratorModel, 3, 0);
       break;
 
     default:
