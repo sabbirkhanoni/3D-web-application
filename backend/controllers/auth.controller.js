@@ -16,7 +16,7 @@ export const signUpController = async (request, response) => {
             success: true,
         })
     } catch (error) {
-        return response.status(400).json({
+        return response.status(500).json({
             message: error.message || 'Registration failed',
             error: false,
             success: false,
@@ -36,7 +36,7 @@ export const loginController = async (request, response) => {
             success: true,
         })
     } catch (error) {
-        return response.status(400).json({
+        return response.status(500).json({
             message: error.message || 'Login failed',
             error: true,
             success: false,
@@ -95,7 +95,7 @@ export const forgetPasswordRequestController = async (request, response) => {
             success: true,
         })
     } catch (error) {
-        return response.status(400).json({
+        return response.status(500).json({
             message: error.message ||'Forget password request failed',
             error: true,
             success: false,
@@ -112,7 +112,7 @@ export const verifyOTPController = async (request, response) => {
             success: true,
         })
     } catch (error) {
-        return response.status(400).json({
+        return response.status(500).json({
             message: error.message || 'OTP verification failed',
             error: true,
             success: false,
@@ -130,7 +130,7 @@ export const resetPasswordController = async (request, response) => {
             success: true,
         })
     } catch (error) {
-        return response.status(400).json({
+        return response.status(500).json({
             message: error.message || 'Password reset failed',
             error: true,
             success: false,

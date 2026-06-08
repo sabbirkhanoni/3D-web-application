@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import connectDB from './config/connectDB.js';
 import authRoute from './routes/auth.route.js';
+import sceneRoute from "./routes/scene.route.js";
 import session from 'express-session';
 
 dotenv.config();
@@ -29,7 +30,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        httpOnly: true,
+        httpOnly: true, //hide cookie from client-side JavaScript
         secure: false, // true in production (HTTPS)
     }
 }));
@@ -42,6 +43,7 @@ app.get("/", (request, response) => {
 
 // Routes
 app.use('/api/auth', authRoute);
+app.use("/api/scene", sceneRoute);
 
 
 
