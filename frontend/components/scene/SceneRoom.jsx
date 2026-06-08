@@ -24,9 +24,22 @@ const SceneRoom = (props) => {
 
   if (latestObject.type === "Cube") {
     mesh = new THREE.Mesh(
-      new THREE.BoxGeometry(2, 2, 2),
+      new THREE.BoxGeometry(3, 3, 3),
       new THREE.MeshStandardMaterial({
         color: 0x00ff00,
+      })
+    );
+  }
+
+   if (latestObject.type === "Sphere") {
+    mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(
+        2,
+        150,
+        50
+      ),
+      new THREE.MeshStandardMaterial({
+        color: 0xff0000,
       })
     );
   }
@@ -37,11 +50,19 @@ const SceneRoom = (props) => {
     latestObject.id;
 
   //set object position randomly within the room
-  mesh.position.set(
-    Math.round((Math.random() * 20 - 10) / 1) * 1,
-    1,
-    Math.round((Math.random() * 20 - 10) / 1) * 1
-  );
+  if (latestObject.type === "Cube") {
+    mesh.position.set(
+      Math.round((Math.random() * 20 - 10) / 1) * 1,
+      2,
+      Math.round((Math.random() * 20 - 10) / 1) * 1
+    );
+  } else if (latestObject.type === "Sphere") {
+    mesh.position.set(
+      Math.round((Math.random() * 20 - 10) / 1) * 1,
+      2,
+      Math.round((Math.random() * 20 - 10) / 1) * 1
+    );
+  }
 
   sceneRef.current.add(mesh);
 
