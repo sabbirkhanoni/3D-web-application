@@ -3,13 +3,15 @@ import toast from "react-hot-toast";
 import { RiCloseCircleFill } from "react-icons/ri";
 
 const AddObjectDialogBox = (props) => {
-  const { onClose } = props;
+  const { onClose, onAddObject } = props;
   const [selectedObject, setSelectedObject] = useState("Cube");
 
   const objects = ["Cube", "Sphere", "Custom Model 1", "Custom Model 2"];
 
   const handleAddObjectToScene = () => {
+    onAddObject(selectedObject);
     toast.success("Object added to scene successfully!");
+    onClose();
   };
 
   return (

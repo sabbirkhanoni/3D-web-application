@@ -5,6 +5,7 @@ import SceneRoom from "../components/scene/SceneRoom";
 
 const SceneViewRoomPage = () => {
   const [openAddObjectDialogBox, setOpenAddObjectDialogBox] = useState(null);
+  const [objects, setObjects] = useState([]);
 
   const handleOnSaveScene = () => {
     toast.success("Scene saved successfully!");
@@ -22,6 +23,15 @@ const SceneViewRoomPage = () => {
             <div className="absolute top-0 right-full mr-3">
               <AddObjectDialogBox
                 onClose={() => setOpenAddObjectDialogBox()}
+                onAddObject={(type) => {
+                setObjects((prev) => [
+                  ...prev,
+                  {
+                    id: Date.now(),
+                    type,
+                  },
+                ]);
+              }}
               />
             </div>
           )}
@@ -66,7 +76,7 @@ const SceneViewRoomPage = () => {
         </div>
 
         <div className="absolute inset-0">
-          <SceneRoom />
+          <SceneRoom objects={objects} />
         </div>
       </div>
     </section>
