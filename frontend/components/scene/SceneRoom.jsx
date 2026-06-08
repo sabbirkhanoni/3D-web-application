@@ -1,6 +1,12 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import BigSizeSofa from "/models/BigSizeSofa.glb?url";
+import TableModel from "/models/table.glb?url";
+import SofaModel from "/models/sofa_chair.glb?url";
+import BedModel from "/models/bed.glb?url";
+import RefrigeratorModel from "/models/fridge.glb?url";
 
 const SceneRoom = (props) => {
   const { objects } = props;
@@ -13,60 +19,156 @@ const SceneRoom = (props) => {
 
   // add new objects to scene
   useEffect(() => {
-  if (!sceneRef.current) return;
+    if (!sceneRef.current) return;
 
-  const latestObject =
-    objects[objects.length - 1];
+    const latestObject = objects[objects.length - 1];
 
-  if (!latestObject) return;
+    if (!latestObject) return;
 
-  let mesh;
+    let mesh;
+    const loader = new GLTFLoader();
 
-  if (latestObject.type === "Cube") {
-    mesh = new THREE.Mesh(
-      new THREE.BoxGeometry(3, 3, 3),
-      new THREE.MeshStandardMaterial({
-        color: 0x00ff00,
-      })
-    );
-  }
+    if (latestObject.type === "Cube") {
+      mesh = new THREE.Mesh(
+        new THREE.BoxGeometry(3, 3, 3),
+        new THREE.MeshStandardMaterial({
+          color: 0x00ff00,
+        }),
+      );
+    } else if (latestObject.type === "Sphere") {
+      mesh = new THREE.Mesh(
+        new THREE.SphereGeometry(2, 150, 50),
+        new THREE.MeshStandardMaterial({
+          color: 0xff0000,
+        }),
+      );
+    } else if (latestObject.type === "Chair") {
+      loader.load(SofaModel, (gltf) => {
+        const model = gltf.scene;
 
-   if (latestObject.type === "Sphere") {
-    mesh = new THREE.Mesh(
-      new THREE.SphereGeometry(
+        model.userData.id = latestObject.id;
+
+        model.scale.set(4, 4, 4);
+        model.position.set(
+          Math.round(Math.random() * 20 - 10),
+          0,
+          Math.round(Math.random() * 20 - 10),
+        );
+
+        sceneRef.current.add(model);
+        newObjectsRef.current.push(model);
+      });
+
+      return;
+    } else if (latestObject.type === "Table") {
+      loader.load(TableModel, (gltf) => {
+        const model = gltf.scene;
+
+        model.userData.id = latestObject.id;
+
+        model.scale.set(2, 2, 2);
+        model.position.set(
+          Math.round(Math.random() * 20 - 10),
+          0,
+          Math.round(Math.random() * 20 - 10),
+        );
+
+        sceneRef.current.add(model);
+        newObjectsRef.current.push(model);
+      });
+
+      return;
+    } else if (latestObject.type === "Sofa") {
+      loader.load(BigSizeSofa, (gltf) => {
+        const model = gltf.scene;
+
+        model.userData.id = latestObject.id;
+
+        model.scale.set(7, 7, 7);
+        model.position.set(
+          Math.round(Math.random() * 20 - 10),
+          0,
+          Math.round(Math.random() * 20 - 10),
+        );
+
+        sceneRef.current.add(model);
+        newObjectsRef.current.push(model);
+      });
+
+      return;
+    } else if (latestObject.type === "Bed") {
+      loader.load(BedModel, (gltf) => {
+        const model = gltf.scene;
+
+        model.userData.id = latestObject.id;
+
+        model.scale.set(1.5, 1.5, 1.5);
+        model.position.set(
+          Math.round(Math.random() * 20 - 10),
+          0,
+          Math.round(Math.random() * 20 - 10),
+        );
+
+        sceneRef.current.add(model);
+        newObjectsRef.current.push(model);
+      });
+
+      return;
+    } else if (latestObject.type === "Refrigerator") {
+      loader.load(RefrigeratorModel, (gltf) => {
+        const model = gltf.scene;
+
+        model.userData.id = latestObject.id;
+
+        model.scale.set(3, 3, 3);
+        model.position.set(
+          Math.round(Math.random() * 20 - 10),
+          0,
+          Math.round(Math.random() * 20 - 10),
+        );
+
+        sceneRef.current.add(model);
+        newObjectsRef.current.push(model);
+      });
+
+      return;
+    } else {
+        mesh = new THREE.Mesh(
+          new THREE.BoxGeometry(1, 1, 1),
+          new THREE.MeshStandardMaterial({
+            color: 0x00ff00,
+          }),
+        );
+    }
+
+    if (!mesh) return;
+
+    mesh.userData.id = latestObject.id;
+
+    //set object position randomly within the room
+    if (latestObject.type === "Cube") {
+      mesh.position.set(
+        Math.round((Math.random() * 20 - 10) / 1) * 1,
         2,
-        150,
-        50
-      ),
-      new THREE.MeshStandardMaterial({
-        color: 0xff0000,
-      })
-    );
-  }
+        Math.round((Math.random() * 20 - 10) / 1) * 1,
+      );
+    } else if (latestObject.type === "Sphere") {
+      mesh.position.set(
+        Math.round((Math.random() * 20 - 10) / 1) * 1,
+        2,
+        Math.round((Math.random() * 20 - 10) / 1) * 1,
+      );
+    } else {
+      mesh.position.set(
+        Math.round((Math.random() * 20 - 10) / 1) * 1,
+        0,
+        Math.round((Math.random() * 20 - 10) / 1) * 1,
+      );
+    }
 
-  if (!mesh) return;
+    sceneRef.current.add(mesh);
 
-  mesh.userData.id =
-    latestObject.id;
-
-  //set object position randomly within the room
-  if (latestObject.type === "Cube") {
-    mesh.position.set(
-      Math.round((Math.random() * 20 - 10) / 1) * 1,
-      2,
-      Math.round((Math.random() * 20 - 10) / 1) * 1
-    );
-  } else if (latestObject.type === "Sphere") {
-    mesh.position.set(
-      Math.round((Math.random() * 20 - 10) / 1) * 1,
-      2,
-      Math.round((Math.random() * 20 - 10) / 1) * 1
-    );
-  }
-
-  sceneRef.current.add(mesh);
-
-  newObjectsRef.current.push(mesh);
+    newObjectsRef.current.push(mesh);
   }, [objects]);
 
   useEffect(() => {
@@ -102,10 +204,10 @@ const SceneRoom = (props) => {
     scene.add(dirLight);
 
     // grid room floor
-    const grid = new THREE.GridHelper(50,50);
+    const grid = new THREE.GridHelper(50, 50);
     scene.add(grid);
 
-      // left wall material
+    // left wall material
     const leftWallMaterial = new THREE.MeshStandardMaterial({
       color: 0xb44745,
       side: THREE.DoubleSide,
@@ -126,7 +228,7 @@ const SceneRoom = (props) => {
     // back wall
     const backWall = new THREE.Mesh(
       new THREE.PlaneGeometry(50, 15),
-      backWallMaterial
+      backWallMaterial,
     );
     backWall.position.set(0, 7.5, -25);
     scene.add(backWall);
@@ -134,7 +236,7 @@ const SceneRoom = (props) => {
     // left wall
     const leftWall = new THREE.Mesh(
       new THREE.PlaneGeometry(50, 15),
-      leftWallMaterial
+      leftWallMaterial,
     );
     leftWall.rotation.y = Math.PI / 2;
     leftWall.position.set(-25, 7.5, 0);
@@ -143,12 +245,11 @@ const SceneRoom = (props) => {
     // right wall
     const rightWall = new THREE.Mesh(
       new THREE.PlaneGeometry(50, 15),
-      rightWallMaterial
+      rightWallMaterial,
     );
     rightWall.rotation.y = -Math.PI / 2;
     rightWall.position.set(25, 7.5, 0);
     scene.add(rightWall);
-
 
     // animate
     const animate = () => {
@@ -174,11 +275,7 @@ const SceneRoom = (props) => {
     };
   }, []);
 
-  return (
-    <div ref={mountRef} 
-      className="w-full h-full" 
-    />
-  );
+  return <div ref={mountRef} className="w-full h-full" />;
 };
 
 export default SceneRoom;
