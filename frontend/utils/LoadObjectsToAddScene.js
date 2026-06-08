@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-
 import BigSizeSofa from "/models/sofa1.glb?url";
 import TableModel from "/models/table.glb?url";
 import WardrobeModel from "/models/Wardrobe.glb?url";
