@@ -28,3 +28,13 @@ export const saveSceneService = async (payload) => {
 
   return scene;
 };
+
+
+export const getSceneByUserIdService = async (userId) => {
+  if (!userId) {
+    throw new Error("User ID is required");
+  }
+
+  const scene = await sceneModel.findOne({ userId });
+  return scene;
+};
