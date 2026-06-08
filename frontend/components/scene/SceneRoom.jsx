@@ -1,174 +1,28 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import BigSizeSofa from "/models/BigSizeSofa.glb?url";
-import TableModel from "/models/table.glb?url";
-import SofaModel from "/models/sofa_chair.glb?url";
-import BedModel from "/models/bed.glb?url";
-import RefrigeratorModel from "/models/fridge.glb?url";
+import { addObjectToScene } from "../../utils/LoadObjectsToAddScene";
 
-const SceneRoom = (props) => {
-  const { objects } = props;
+const SceneRoom = ({ objects }) => {
+  const mountRef = useRef(null);
 
-  const mountRef = useRef(null); //store the to attach the scene
-  const sceneRef = useRef(null); //store the scene to used in other components
-  const cameraRef = useRef(null); //store the camera to used in other components
-  const rendererRef = useRef(null); //store the renderer to used in other components
+  const sceneRef = useRef(null); //Store the scene to used in other components
+  const cameraRef = useRef(null); //Store the camera to used in other components
+  const rendererRef = useRef(null); //Store the renderer to used in other components
+
   const newObjectsRef = useRef([]);
 
-  // add new objects to scene
+  // Object Add
   useEffect(() => {
-    if (!sceneRef.current) return;
+    if (!sceneRef.current || objects.length === 0) return;
 
     const latestObject = objects[objects.length - 1];
 
-    if (!latestObject) return;
-
-    let mesh;
-    const loader = new GLTFLoader();
-
-    if (latestObject.type === "Cube") {
-      mesh = new THREE.Mesh(
-        new THREE.BoxGeometry(3, 3, 3),
-        new THREE.MeshStandardMaterial({
-          color: 0x00ff00,
-        }),
-      );
-    } else if (latestObject.type === "Sphere") {
-      mesh = new THREE.Mesh(
-        new THREE.SphereGeometry(2, 150, 50),
-        new THREE.MeshStandardMaterial({
-          color: 0xff0000,
-        }),
-      );
-    } else if (latestObject.type === "Chair") {
-      loader.load(SofaModel, (gltf) => {
-        const model = gltf.scene;
-
-        model.userData.id = latestObject.id;
-
-        model.scale.set(4, 4, 4);
-        model.position.set(
-          Math.round(Math.random() * 20 - 10),
-          0,
-          Math.round(Math.random() * 20 - 10),
-        );
-
-        sceneRef.current.add(model);
-        newObjectsRef.current.push(model);
-      });
-
-      return;
-    } else if (latestObject.type === "Table") {
-      loader.load(TableModel, (gltf) => {
-        const model = gltf.scene;
-
-        model.userData.id = latestObject.id;
-
-        model.scale.set(2, 2, 2);
-        model.position.set(
-          Math.round(Math.random() * 20 - 10),
-          0,
-          Math.round(Math.random() * 20 - 10),
-        );
-
-        sceneRef.current.add(model);
-        newObjectsRef.current.push(model);
-      });
-
-      return;
-    } else if (latestObject.type === "Sofa") {
-      loader.load(BigSizeSofa, (gltf) => {
-        const model = gltf.scene;
-
-        model.userData.id = latestObject.id;
-
-        model.scale.set(7, 7, 7);
-        model.position.set(
-          Math.round(Math.random() * 20 - 10),
-          0,
-          Math.round(Math.random() * 20 - 10),
-        );
-
-        sceneRef.current.add(model);
-        newObjectsRef.current.push(model);
-      });
-
-      return;
-    } else if (latestObject.type === "Bed") {
-      loader.load(BedModel, (gltf) => {
-        const model = gltf.scene;
-
-        model.userData.id = latestObject.id;
-
-        model.scale.set(1.5, 1.5, 1.5);
-        model.position.set(
-          Math.round(Math.random() * 20 - 10),
-          0,
-          Math.round(Math.random() * 20 - 10),
-        );
-
-        sceneRef.current.add(model);
-        newObjectsRef.current.push(model);
-      });
-
-      return;
-    } else if (latestObject.type === "Refrigerator") {
-      loader.load(RefrigeratorModel, (gltf) => {
-        const model = gltf.scene;
-
-        model.userData.id = latestObject.id;
-
-        model.scale.set(3, 3, 3);
-        model.position.set(
-          Math.round(Math.random() * 20 - 10),
-          0,
-          Math.round(Math.random() * 20 - 10),
-        );
-
-        sceneRef.current.add(model);
-        newObjectsRef.current.push(model);
-      });
-
-      return;
-    } else {
-        mesh = new THREE.Mesh(
-          new THREE.BoxGeometry(1, 1, 1),
-          new THREE.MeshStandardMaterial({
-            color: 0x00ff00,
-          }),
-        );
-    }
-
-    if (!mesh) return;
-
-    mesh.userData.id = latestObject.id;
-
-    //set object position randomly within the room
-    if (latestObject.type === "Cube") {
-      mesh.position.set(
-        Math.round((Math.random() * 20 - 10) / 1) * 1,
-        2,
-        Math.round((Math.random() * 20 - 10) / 1) * 1,
-      );
-    } else if (latestObject.type === "Sphere") {
-      mesh.position.set(
-        Math.round((Math.random() * 20 - 10) / 1) * 1,
-        2,
-        Math.round((Math.random() * 20 - 10) / 1) * 1,
-      );
-    } else {
-      mesh.position.set(
-        Math.round((Math.random() * 20 - 10) / 1) * 1,
-        0,
-        Math.round((Math.random() * 20 - 10) / 1) * 1,
-      );
-    }
-
-    sceneRef.current.add(mesh);
-
-    newObjectsRef.current.push(mesh);
+    addObjectToScene(
+      latestObject,
+      sceneRef.current,
+      newObjectsRef
+    );
   }, [objects]);
 
   useEffect(() => {
@@ -176,50 +30,69 @@ const SceneRoom = (props) => {
 
     const scene = new THREE.Scene();
     sceneRef.current = scene; //store the scene
+
     scene.background = new THREE.Color(0x0d0e24);
 
     const camera = new THREE.PerspectiveCamera(
       45,
       container.clientWidth / container.clientHeight,
       0.1,
-      1000,
+      1000
     );
-    cameraRef.current = camera; // store the camera
+
     camera.position.set(0, 35, 52);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    rendererRef.current = renderer; // store the renderer
-    renderer.setSize(container.clientWidth, container.clientHeight);
+    cameraRef.current = camera; //store the camera
+
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+    });
+
+    renderer.setSize(
+      container.clientWidth,
+      container.clientHeight
+    );
+
+    rendererRef.current = renderer; //store the renderer
 
     container.appendChild(renderer.domElement);
 
-    const orbit = new OrbitControls(camera, renderer.domElement);
+    const orbit = new OrbitControls(
+      camera,
+      renderer.domElement
+    );
+
     orbit.target.set(0, 2, 0);
     orbit.update();
 
-    // lights
+    // Lights
     scene.add(new THREE.AmbientLight(0xffffff, 1));
-    const dirLight = new THREE.DirectionalLight(0xffffff, 2);
+
+    const dirLight = new THREE.DirectionalLight(
+      0xffffff,
+      2
+    );
+
     dirLight.position.set(10, 15, 10);
+
     scene.add(dirLight);
 
-    // grid room floor
-    const grid = new THREE.GridHelper(50, 50);
-    scene.add(grid);
+    // Room Grid floor
+    scene.add(new THREE.GridHelper(50, 50));
 
-    // left wall material
+    // left Walls material
     const leftWallMaterial = new THREE.MeshStandardMaterial({
       color: 0xb44745,
       side: THREE.DoubleSide,
     });
 
-    // right wall material
+    // right Walls material
     const rightWallMaterial = new THREE.MeshStandardMaterial({
       color: 0xb44745,
       side: THREE.DoubleSide,
     });
 
-    // back wall material
+    // back Walls material
     const backWallMaterial = new THREE.MeshStandardMaterial({
       color: 0xdedcd8,
       side: THREE.DoubleSide,
@@ -228,30 +101,31 @@ const SceneRoom = (props) => {
     // back wall
     const backWall = new THREE.Mesh(
       new THREE.PlaneGeometry(50, 15),
-      backWallMaterial,
+      backWallMaterial
     );
     backWall.position.set(0, 7.5, -25);
     scene.add(backWall);
 
+
     // left wall
     const leftWall = new THREE.Mesh(
       new THREE.PlaneGeometry(50, 15),
-      leftWallMaterial,
+      leftWallMaterial
     );
     leftWall.rotation.y = Math.PI / 2;
     leftWall.position.set(-25, 7.5, 0);
     scene.add(leftWall);
 
+
     // right wall
     const rightWall = new THREE.Mesh(
       new THREE.PlaneGeometry(50, 15),
-      rightWallMaterial,
+      rightWallMaterial
     );
     rightWall.rotation.y = -Math.PI / 2;
     rightWall.position.set(25, 7.5, 0);
     scene.add(rightWall);
 
-    // animate
     const animate = () => {
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
@@ -259,23 +133,16 @@ const SceneRoom = (props) => {
 
     animate();
 
-    // handle window resize
-    const handleResize = () => {
-      camera.aspect = container.clientWidth / container.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(container.clientWidth, container.clientHeight);
-    };
-
-    window.addEventListener("resize", handleResize);
-
     return () => {
-      window.removeEventListener("resize", handleResize);
       container.removeChild(renderer.domElement);
       renderer.dispose();
     };
   }, []);
 
-  return <div ref={mountRef} className="w-full h-full" />;
+  return (
+    <div 
+      ref={mountRef} className="w-full h-full" />
+  );
 };
 
 export default SceneRoom;
