@@ -38,3 +38,12 @@ export const getSceneByUserIdService = async (userId) => {
   const scene = await sceneModel.findOne({ userId });
   return scene;
 };
+
+
+export const deleteSceneByUserIdService = async (userId) => {
+  if (!userId) {
+    throw new Error("User ID is required");
+  }
+
+  await sceneModel.deleteOne({ userId });
+};
