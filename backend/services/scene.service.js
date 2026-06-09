@@ -16,19 +16,19 @@ export const saveSceneService = async (payload) => {
   }
 
   const scene = await sceneModel.findOneAndUpdate(
-    { userId }, // find by user
+    { userId: userId.toString() },
     {
-      $set: { objects }, // replace objects
+      userId: userId.toString(),
+      objects: objects,
     },
     {
-      new: true,   // return updated doc
-      upsert: true, // create if not exists
-    }
+      new: true,
+      upsert: true,
+    },
   );
 
   return scene;
 };
-
 
 export const getSceneByUserIdService = async (userId) => {
   if (!userId) {
@@ -38,7 +38,6 @@ export const getSceneByUserIdService = async (userId) => {
   const scene = await sceneModel.findOne({ userId });
   return scene;
 };
-
 
 export const deleteSceneByUserIdService = async (userId) => {
   if (!userId) {

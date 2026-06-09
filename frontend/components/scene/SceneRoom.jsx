@@ -14,13 +14,18 @@ const SceneRoom = (props) => {
   const dragControlsRef = useRef(null);
   const orbitRef = useRef(null);
   const newObjectsRef = useRef([]);
+  const loadedObjectIdsRef = useRef(new Set()); 
 
   //Add new objects
   useEffect(() => {
     if (!sceneRef.current || objects.length === 0) return;
 
-    const latestObject = objects[objects.length - 1];
-    addObjectToScene(latestObject, sceneRef.current, newObjectsRef);
+    objects.forEach((object) => {
+      if (!loadedObjectIdsRef.current.has(object.id)) {
+        addObjectToScene(object, sceneRef.current, newObjectsRef);
+        loadedObjectIdsRef.current.add(object.id);
+      }
+    });
 
     // Update drag controls with new objects
     if (dragControlsRef.current) {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AddObjectDialogBox from "../components/dashboard/AddObjectDialogBox";
 import toast from "react-hot-toast";
 import SceneRoom from "../components/scene/SceneRoom";
@@ -9,6 +9,33 @@ const SceneViewRoomPage = () => {
   const [objects, setObjects] = useState([]);
   const [selectedObjectId, setSelectedObjectId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isLoadingScene, setIsLoadingScene] = useState(false);
+
+
+  const loadSavedScene = async () => {
+    try {
+      setIsLoadingScene(true);
+
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/scene`,
+        { withCredentials: true },
+      );
+
+      if (response.data.success) {
+        setObjects(response.data.data.objects);
+        toast.success("Scene loaded successfully!");
+      }
+
+    } catch (error) {
+      console.error("Error loading scene:", error);
+    } finally {
+      setIsLoadingScene(false);
+    }
+  };
+
+  useEffect(() => {
+    loadSavedScene();
+  }, []);
 
   // This is Call back function to update object position in state
   const handleUpdateObjectPosition = (objectId, newPosition) => {
@@ -44,7 +71,7 @@ const SceneViewRoomPage = () => {
         {
           objects: objectData,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       if (!response.data.success) {
@@ -104,9 +131,7 @@ const SceneViewRoomPage = () => {
           <div className="flex flex-col sm:flex-row gap-2">
             <button
               className="bg-blue-500 cursor-pointer flex items-center justify-center gap-2 border border-blue-600 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm"
-              onClick={() =>
-                setOpenAddObjectDialogBox(!openAddObjectDialogBox)
-              }
+              onClick={() => setOpenAddObjectDialogBox(!openAddObjectDialogBox)}
             >
               <svg
                 viewBox="0 0 24 24"

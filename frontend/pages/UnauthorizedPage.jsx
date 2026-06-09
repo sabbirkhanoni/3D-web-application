@@ -39,6 +39,11 @@ const UnauthorizedPage = () => {
           <p className="text-red-200">
             You don’t have permission to view this page
           </p>
+          <button
+           onClick={() => window.history.back()}
+           className="mt-4 px-4 py-2 bg-red-500 text-white rounded">
+            Go Back
+          </button>
         </div>
 
       </div>
