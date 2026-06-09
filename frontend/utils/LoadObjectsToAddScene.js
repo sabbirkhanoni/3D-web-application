@@ -9,8 +9,20 @@ import RefrigeratorModel from "/models/fridge.glb?url";
 const loader = new GLTFLoader();
 
 export const addObjectToScene = (object, scene, objectsRef) => {
-  const randomX = Math.round(Math.random() * 20 - 10);
-  const randomZ = Math.round(Math.random() * 20 - 10);
+  
+  //check object already exists in scene
+  const alreadyExists = objectsRef.current.some(
+    (obj) => obj.userData.id === object.id
+  );
+
+  if (alreadyExists) {
+    return; 
+  }
+
+  // If position is not provided, generate random position
+  const posX = object.position?.x ?? Math.round(Math.random() * 20 - 10);
+  const posY = object.position?.y ?? 0;
+  const posZ = object.position?.z ?? Math.round(Math.random() * 20 - 10);
 
   const addModel = (path, scale, floorY = 0) => {
     loader.load(path, (gltf) => {
@@ -19,7 +31,7 @@ export const addObjectToScene = (object, scene, objectsRef) => {
       model.userData.id = object.id;
       model.userData.floorY = floorY; 
       model.scale.set(scale, scale, scale);
-      model.position.set(randomX, floorY, randomZ);
+      model.position.set(posX, floorY, posZ);
 
       scene.add(model);
       objectsRef.current.push(model);
@@ -35,10 +47,11 @@ export const addObjectToScene = (object, scene, objectsRef) => {
 
       cube.userData.id = object.id;
       cube.userData.floorY = 2; 
-      cube.position.set(randomX, 2, randomZ);
+      cube.position.set(posX, 2, posZ);
 
       scene.add(cube);
       objectsRef.current.push(cube);
+      console.log("Cube added successfully:", object.id);
       break;
     }
 
@@ -50,7 +63,7 @@ export const addObjectToScene = (object, scene, objectsRef) => {
 
       sphere.userData.id = object.id;
       sphere.userData.floorY = 2;
-      sphere.position.set(randomX, 2, randomZ);
+      sphere.position.set(posX, 2, posZ);
 
       scene.add(sphere);
       objectsRef.current.push(sphere);

@@ -2,7 +2,8 @@ import { saveSceneService, getSceneByUserIdService, deleteSceneByUserIdService }
 
 export const createSceneController = async (request, response) => {
   try {
-    const createdScene = await saveSceneService(request.body);
+    const userId = request.session.userId; 
+    const createdScene = await saveSceneService({ userId, ...request.body });
 
     if (!createdScene) {
       return response.status(400).json({

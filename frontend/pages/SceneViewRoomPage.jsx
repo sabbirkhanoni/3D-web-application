@@ -2,16 +2,75 @@ import React, { useState } from "react";
 import AddObjectDialogBox from "../components/dashboard/AddObjectDialogBox";
 import toast from "react-hot-toast";
 import SceneRoom from "../components/scene/SceneRoom";
+import axios from "axios";
 
 const SceneViewRoomPage = () => {
-  const [openAddObjectDialogBox, setOpenAddObjectDialogBox] = useState(null);
+  const [openAddObjectDialogBox, setOpenAddObjectDialogBox] = useState(false);
   const [objects, setObjects] = useState([]);
+  const [selectedObjectId, setSelectedObjectId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleOnSaveScene = () => {
-    toast.success("Scene saved successfully!");
+  // This is Call back function to update object position in state
+  const handleUpdateObjectPosition = (objectId, newPosition) => {
+    setObjects((prevObjects) =>
+      prevObjects.map((obj) =>
+        obj.id === objectId
+          ? {
+              ...obj,
+              position: newPosition, //attach position with object
+            }
+          : obj,
+      ),
+    );
+  };
+
+  const objectData = objects.map((obj) => ({
+    id: obj.id,
+    type: obj.type,
+    position: obj.position || { x: 0, y: 0, z: 0 },
+  }));
+
+  const handleOnSaveScene = async () => {
+    try {
+      if (objects.length === 0) {
+        toast.error("Please add at least one object to save the scene.");
+        return;
+      }
+
+      setLoading(true);
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/scene`,
+        {
+          objects: objectData,
+        },
+        { withCredentials: true }
+      );
+
+      if (!response.data.success) {
+        toast.error(response.data.message || "Failed to save scene.");
+        return;
+      }
+
+      if (response.data.success) {
+        toast.success("Scene saved successfully!");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error(error.response?.data?.message || "Failed to save scene.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDeleteObject = (objectId) => {
+    if (!objectId) {
+      toast.error("Select an object first");
+      return;
+    }
+
+    setObjects((prev) => prev.filter((obj) => obj.id !== objectId));
+    setSelectedObjectId(null);
     toast.success("Object deleted successfully!");
   };
 
@@ -22,16 +81,22 @@ const SceneViewRoomPage = () => {
           {openAddObjectDialogBox && (
             <div className="absolute top-0 right-full mr-3">
               <AddObjectDialogBox
-                onClose={() => setOpenAddObjectDialogBox()}
+                onClose={() => setOpenAddObjectDialogBox(false)}
                 onAddObject={(type) => {
-                setObjects((prev) => [
-                  ...prev,
-                  {
-                    id: Date.now(),
-                    type,
-                  },
-                ]);
-              }}
+                  setObjects((prev) => [
+                    ...prev,
+                    {
+                      id: `${type}_${Date.now()}`,
+                      type,
+                      position: {
+                        x: Math.round(Math.random() * 20 - 10), // Randomly added position for new object
+                        y: 0,
+                        z: Math.round(Math.random() * 20 - 10), //Randomly added position for new object
+                      },
+                    },
+                  ]);
+                  setOpenAddObjectDialogBox(false);
+                }}
               />
             </div>
           )}
@@ -39,44 +104,92 @@ const SceneViewRoomPage = () => {
           <div className="flex flex-col sm:flex-row gap-2">
             <button
               className="bg-blue-500 cursor-pointer flex items-center justify-center gap-2 border border-blue-600 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm"
-              onClick={() => setOpenAddObjectDialogBox(!openAddObjectDialogBox)}
+              onClick={() =>
+                setOpenAddObjectDialogBox(!openAddObjectDialogBox)
+              }
             >
-              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={1.5}>
-                <path d="M12 4v16m8-8H4" strokeLinecap="round" strokeLinejoin="round" />
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                className="w-4 h-4"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  d="M12 4v16m8-8H4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
-              Add Object
+              Add Object ({objects.length})
             </button>
 
             <button
               onClick={() => handleDeleteObject(selectedObjectId)}
-                className="
-                  flex items-center justify-center gap-2
-                  bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 hover:border-red-500/50
-                  text-red-400 text-sm font-medium rounded-lg py-2 px-3
-                  transition-all duration-200 cursor-pointer
-                "
+              className={`
+                flex items-center justify-center gap-2
+                text-sm font-medium rounded-lg py-2 px-3
+                transition-all duration-200
+                ${
+                  selectedObjectId
+                    ? "bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 hover:border-red-500/50 text-red-400 cursor-pointer"
+                    : "bg-red-500/5 border border-red-500/20 text-red-300 cursor-not-allowed opacity-50"
+                }
+              `}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                className="w-4 h-4"
+                stroke="currentColor"
+                strokeWidth={1.5}
               >
-              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={1.5}>
-                <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
               Delete Object
             </button>
 
-            <button 
-              className="flex items-center gap-1 justify-center bg-green-500/10 border font-semibold border-green-600 cursor-pointer hover:bg-green-600/20 text-white px-4 py-2 rounded-md text-sm"
+            <button
+              className={`
+                flex items-center gap-1 justify-center
+                border font-semibold rounded-md py-2 px-4 text-sm
+                transition-all duration-200
+                ${
+                  loading
+                    ? "bg-gray-500/50 border-gray-600 text-gray-300 cursor-not-allowed"
+                    : "bg-green-500/10 border-green-600 cursor-pointer hover:bg-green-600/20 text-white"
+                }
+              `}
               onClick={() => handleOnSaveScene()}
+              disabled={loading}
             >
-              {/* Save icon, not + icon */}
-              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={1.5}>
-                <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                className="w-4 h-4"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  d="M5 13l4 4L19 7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
-              Save
+              {loading ? "Saving..." : "Save"}
             </button>
           </div>
         </div>
 
         <div className="absolute inset-0">
-          <SceneRoom objects={objects} />
+          <SceneRoom
+            objects={objects}
+            onUpdateObjectPosition={handleUpdateObjectPosition}
+          />
         </div>
       </div>
     </section>

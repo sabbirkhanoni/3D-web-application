@@ -41,7 +41,6 @@ const LoginPage = () => {
 
     if(response.data.success){
       toast.success(response.data.message)
-
       setData({
         email: "",
         password: "",

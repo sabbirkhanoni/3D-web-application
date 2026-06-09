@@ -4,7 +4,7 @@ export const saveSceneService = async (payload) => {
   const { userId, objects } = payload;
 
   if (!userId) {
-    throw new Error("User ID is required");
+    throw new Error("User ID is required in backend");
   }
 
   if (!objects || !Array.isArray(objects)) {

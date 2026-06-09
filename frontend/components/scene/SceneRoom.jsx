@@ -4,51 +4,57 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { DragControls } from "three/examples/jsm/controls/DragControls";
 import { addObjectToScene } from "../../utils/LoadObjectsToAddScene";
 
-const SceneRoom = ({ objects }) => {
-  const mountRef = useRef(null); // Container Ref
+const SceneRoom = (props) => {
+  const { objects, onUpdateObjectPosition } = props;
 
-  const sceneRef = useRef(null); // Store Scene to use in other components
-  const cameraRef = useRef(null); // Store Camera to use in other components
-  const rendererRef = useRef(null); // Store Renderer to use in other components
+  const mountRef = useRef(null);
+  const sceneRef = useRef(null); // Store scene to used in other components
+  const cameraRef = useRef(null); // Store camera to used in other components
+  const rendererRef = useRef(null); // Store renderer to used in other components
+  const dragControlsRef = useRef(null);
+  const orbitRef = useRef(null);
+  const newObjectsRef = useRef([]);
 
-  const dragControlsRef = useRef(null); // Store Drag Controls to use in other components
-  const orbitRef = useRef(null); // Store Orbit Controls to use in other components
-
-  const newObjectsRef = useRef([]); 
-
-  // Object Add
+  //Add new objects
   useEffect(() => {
     if (!sceneRef.current || objects.length === 0) return;
 
     const latestObject = objects[objects.length - 1];
-
     addObjectToScene(latestObject, sceneRef.current, newObjectsRef);
+
+    // Update drag controls with new objects
+    if (dragControlsRef.current) {
+      dragControlsRef.current.objects = newObjectsRef.current;
+    }
   }, [objects]);
 
+  // Scene setup
   useEffect(() => {
     const container = mountRef.current;
 
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-
     scene.background = new THREE.Color(0x0d0e24);
 
+    //camera
     const camera = new THREE.PerspectiveCamera(
       45,
       container.clientWidth / container.clientHeight,
       0.1,
       1000
     );
-
     camera.position.set(0, 35, 50);
     cameraRef.current = camera;
 
+
+    //renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     rendererRef.current = renderer;
-
     container.appendChild(renderer.domElement);
 
+
+    // Orbit Controls
     const orbit = new OrbitControls(camera, renderer.domElement);
     orbit.enableDamping = true;
     orbit.dampingFactor = 0.05;
@@ -59,6 +65,7 @@ const SceneRoom = ({ objects }) => {
     orbit.update();
     orbitRef.current = orbit;
 
+
     // Drag Controls
     const dragControls = new DragControls(
       newObjectsRef.current,
@@ -67,6 +74,7 @@ const SceneRoom = ({ objects }) => {
     );
     dragControlsRef.current = dragControls;
 
+    // Drag Events when drag start
     dragControls.addEventListener("dragstart", (event) => {
       orbit.enabled = false;
 
@@ -77,16 +85,7 @@ const SceneRoom = ({ objects }) => {
       });
     });
 
-    dragControls.addEventListener("dragend", (event) => {
-      orbit.enabled = true;
-
-      event.object.traverse?.((child) => {
-        if (child.material) {
-          child.material.emissive?.setHex(0x000000);
-        }
-      });
-    });
-
+    // Drag Events when dragging
     dragControls.addEventListener("drag", (event) => {
       const obj = event.object;
 
@@ -96,6 +95,36 @@ const SceneRoom = ({ objects }) => {
 
       obj.position.x = Math.max(-24, Math.min(24, obj.position.x));
       obj.position.z = Math.max(-24, Math.min(24, obj.position.z));
+
+      //Update the position in parent state
+      if (onUpdateObjectPosition) {
+        onUpdateObjectPosition(obj.userData.id, {
+          x: Math.round(obj.position.x * 100) / 100,
+          y: Math.round(obj.position.y * 100) / 100,
+          z: Math.round(obj.position.z * 100) / 100,
+        });
+      }
+    });
+
+
+    // Drag Events when drag end
+    dragControls.addEventListener("dragend", (event) => {
+      orbit.enabled = true;
+
+      event.object.traverse?.((child) => {
+        if (child.material) {
+          child.material.emissive?.setHex(0x000000);
+        }
+      });
+
+      //Update the position in parent state on drag end
+      if (onUpdateObjectPosition) {
+        onUpdateObjectPosition(event.object.userData.id, {
+          x: Math.round(event.object.position.x * 100) / 100,
+          y: Math.round(event.object.position.y * 100) / 100,
+          z: Math.round(event.object.position.z * 100) / 100,
+        });
+      }
     });
 
     // Lights
@@ -105,24 +134,24 @@ const SceneRoom = ({ objects }) => {
     dirLight.position.set(10, 15, 10);
     scene.add(dirLight);
 
-    // Floor Grid
+    // Room Floor Grid
     const gridHelper = new THREE.GridHelper(50, 50);
     gridHelper.position.y = 0;
     scene.add(gridHelper);
 
-    // Wall Materials
+    // Left wall materials
     const leftWallMaterial = new THREE.MeshStandardMaterial({
       color: 0xb44745,
       side: THREE.DoubleSide,
     });
 
-    // Right Wall Material
+    // Right wall material
     const rightWallMaterial = new THREE.MeshStandardMaterial({
       color: 0xb44745,
       side: THREE.DoubleSide,
     });
 
-    // Back Wall Material
+    // Back wall material
     const backWallMaterial = new THREE.MeshStandardMaterial({
       color: 0xdedcd8,
       side: THREE.DoubleSide,
@@ -173,7 +202,11 @@ const SceneRoom = ({ objects }) => {
 
     return () => {
       window.removeEventListener("resize", handleResize);
-      container.removeChild(renderer.domElement);
+      
+      if (container && renderer.domElement && container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
+      
       renderer.dispose();
       dragControls.dispose();
       orbit.dispose();
