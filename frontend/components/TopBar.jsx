@@ -1,8 +1,31 @@
+import axios from "axios";
 import React from "react";
+import toast from "react-hot-toast";
 import { RiLogoutCircleRFill } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
 
 const TopBar = () => {
-  const handleLogout = async () => {};
+
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/auth/logout`,
+        {},
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+        navigate("/login");
+      } else {
+        console.error("Logout failed:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   return (
     <header className="flex items-center justify-between px-5 bg-[#54579d] border-b border-white/10 shrink-0 z-30">
