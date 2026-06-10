@@ -21,13 +21,13 @@ const SceneSelectedObjectOfSideBar = ({ object, isSelected, onSelect }) => {
   const icon = OBJECT_ICONS[object.type] || OBJECT_ICONS.box;
 
   return (
-    <li>
+    <li className="border border-gray-600">
       <button
         onClick={onSelect}
         className={`
-          w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors duration-100
+          w-full overflow-auto flex items-center gap-3 px-4 py-2.5 text-left transition-colors bg-violet-600/10 border-2 border-gray-300 duration-100
           ${isSelected
-            ? "bg-violet-600/20 border-l-2 border-violet-500"
+            ? "bg-violet-600/60 border-l-2 border-violet-500"
             : "border-l-2 border-transparent hover:bg-white/5"
           }
         `}

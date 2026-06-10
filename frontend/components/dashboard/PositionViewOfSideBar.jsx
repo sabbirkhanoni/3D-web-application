@@ -10,7 +10,7 @@ const PositionViewOfSideBar = ({ axis, value }) => (
         outline-none transition-colors duration-150
       "
     >
-      {value}
+      {value.toFixed(4)}
     </label>
   </div>
 );

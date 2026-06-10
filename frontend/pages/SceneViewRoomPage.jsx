@@ -6,7 +6,8 @@ import axios from "axios";
 import { useScene } from "../context/SceneContext";
 
 const SceneViewRoomPage = () => {
-  const { objects, setObjects, selectedObjectId, setSelectedObjectId } = useScene();
+  const { objects, setObjects, selectedObjectId, setSelectedObjectId } =
+    useScene();
 
   const [openAddObjectDialogBox, setOpenAddObjectDialogBox] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -50,7 +51,6 @@ const SceneViewRoomPage = () => {
     });
   };
 
-
   const handleOnSaveScene = async () => {
     try {
       if (objectsRef.current.length === 0) {
@@ -60,7 +60,7 @@ const SceneViewRoomPage = () => {
 
       setLoading(true);
 
-      const cleanObjects = objectsRef.current.map((obj) => ({
+      const cleanObjects = objects.map((obj) => ({
         id: obj.id,
         type: obj.type,
         position: {
@@ -90,20 +90,20 @@ const SceneViewRoomPage = () => {
   };
 
   const handleDeleteObject = (objectId) => {
-  if (!objectId) {
-    toast.error("Select an object first");
-    return;
-  }
+    if (!objectId) {
+      toast.error("Select an object first");
+      return;
+    }
 
-  setObjects((prev) => {
-    const updated = prev.filter((obj) => obj.id !== objectId);
-    objectsRef.current = updated;
-    return updated;
-  });
+    setObjects((prev) => {
+      const updated = prev.filter((obj) => obj.id !== objectId);
+      objectsRef.current = updated;
+      return updated;
+    });
 
-  setSelectedObjectId(null);
-  toast.success("Object deleted successfully!");
-};
+    setSelectedObjectId(null);
+    toast.success("Object deleted successfully!");
+  };
 
   return (
     <section className="h-full w-full overflow-hidden flex flex-col bg-[#0d0e24]">
@@ -114,18 +114,20 @@ const SceneViewRoomPage = () => {
               <AddObjectDialogBox
                 onClose={() => setOpenAddObjectDialogBox(false)}
                 onAddObject={(type) => {
-                  setObjects((prev) => [
-                    ...prev,
-                    {
+                  setObjects((prev) => {
+                    const newObj = {
                       id: `${type}_${Date.now()}`,
                       type,
                       position: {
-                        x: Math.round(Math.random() * 20 - 10), // Randomly added position for new object
+                        x: Math.round(Math.random() * 20 - 10),
                         y: 0,
-                        z: Math.round(Math.random() * 20 - 10), //Randomly added position for new object
+                        z: Math.round(Math.random() * 20 - 10),
                       },
-                    },
-                  ]);
+                    };
+                    const updated = [...prev, newObj];
+                    objectsRef.current = updated;
+                    return updated;
+                  });
                   setOpenAddObjectDialogBox(false);
                 }}
               />
@@ -218,7 +220,7 @@ const SceneViewRoomPage = () => {
           <SceneRoom
             objects={objects}
             onUpdateObjectPosition={handleUpdateObjectPosition}
-            onSelectObject={setSelectedObjectId} 
+            onSelectObject={setSelectedObjectId}
           />
         </div>
       </div>
