@@ -105,12 +105,6 @@ const SceneRoom = (props) => {
     // Drag Events when drag start
     dragControls.addEventListener("dragstart", (event) => {
       orbit.enabled = false;
-
-      event.object.traverse?.((child) => {
-        if (child.material) {
-          child.material.emissive?.setHex(0x00ff00);
-        }
-      });
     });
 
     // Drag Events when dragging
@@ -123,7 +117,7 @@ const SceneRoom = (props) => {
 
       obj.position.x = Math.max(-24, Math.min(24, obj.position.x));
       obj.position.z = Math.max(-24, Math.min(24, obj.position.z));
-      
+
       //Update the position in parent state
       if (onUpdateObjectPosition) {
         onUpdateObjectPosition(obj.userData.id, {
@@ -137,14 +131,13 @@ const SceneRoom = (props) => {
     // Drag Events when drag end
     dragControls.addEventListener("dragend", (event) => {
       orbit.enabled = true;
-
       const obj = event.object.userData.rootModel || event.object;
 
-      event.object.traverse?.((child) => {
-        if (child.material) {
-          child.material.emissive?.setHex(0x000000);
-        }
-      });
+      if (selectedMeshRef.current?.userData.id !== obj.userData.id) {
+        event.object.traverse?.((child) => {
+          if (child.material) child.material.emissive?.setHex(0x000000);
+        });
+      }
 
       onUpdateObjectPosition(obj.userData.id, {
         x: obj.position.x,
@@ -229,11 +222,25 @@ const SceneRoom = (props) => {
         true,
       );
 
+      // আগেরটার highlight সরাও
+      if (selectedMeshRef.current) {
+        selectedMeshRef.current.traverse?.((child) => {
+          if (child.material) child.material.emissive?.setHex(0x000000);
+        });
+        selectedMeshRef.current = null;
+      }
+
       if (intersects.length > 0) {
         const hit = intersects[0].object;
         const rootModel = hit.userData.rootModel || hit;
-        const objectId = rootModel.userData.id;
-        onSelectObject?.(objectId);
+
+        // নতুনটায় highlight দাও
+        rootModel.traverse?.((child) => {
+          if (child.material) child.material.emissive?.setHex(0x0044ff);
+        });
+        selectedMeshRef.current = rootModel; // 🔥 track করো
+
+        onSelectObject?.(rootModel.userData.id);
       } else {
         onSelectObject?.(null);
       }
