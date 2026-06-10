@@ -96,7 +96,7 @@ const SceneViewRoomPage = () => {
 
   setObjects((prev) => {
     const updated = prev.filter((obj) => obj.id !== objectId);
-    objectsRef.current = updated; // 🔥 এইটা missing ছিল
+    objectsRef.current = updated;
     return updated;
   });
 

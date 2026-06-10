@@ -19,7 +19,7 @@ const SceneRoom = (props) => {
   // Raycaster for click selection
   const raycaster = new THREE.Raycaster();
   const mouse = new THREE.Vector2();
-
+  
   //Remove deleted objects form scene
   useEffect(() => {
     if (!sceneRef.current) return;
@@ -222,7 +222,7 @@ const SceneRoom = (props) => {
         true,
       );
 
-      // আগেরটার highlight সরাও
+      
       if (selectedMeshRef.current) {
         selectedMeshRef.current.traverse?.((child) => {
           if (child.material) child.material.emissive?.setHex(0x000000);
@@ -234,11 +234,11 @@ const SceneRoom = (props) => {
         const hit = intersects[0].object;
         const rootModel = hit.userData.rootModel || hit;
 
-        // নতুনটায় highlight দাও
+      
         rootModel.traverse?.((child) => {
           if (child.material) child.material.emissive?.setHex(0x0044ff);
         });
-        selectedMeshRef.current = rootModel; // 🔥 track করো
+        selectedMeshRef.current = rootModel;
 
         onSelectObject?.(rootModel.userData.id);
       } else {
