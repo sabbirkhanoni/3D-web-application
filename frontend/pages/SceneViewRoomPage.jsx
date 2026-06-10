@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import AddObjectDialogBox from "../components/dashboard/AddObjectDialogBox";
 import toast from "react-hot-toast";
 import SceneRoom from "../components/scene/SceneRoom";
@@ -10,7 +10,7 @@ const SceneViewRoomPage = () => {
   const [selectedObjectId, setSelectedObjectId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isLoadingScene, setIsLoadingScene] = useState(false);
-
+  const objectsRef = useRef([]);
 
   const loadSavedScene = async () => {
     try {
@@ -23,9 +23,9 @@ const SceneViewRoomPage = () => {
 
       if (response.data.success) {
         setObjects(response.data.data.objects);
+        objectsRef.current = response.data.data.objects;
         toast.success("Scene loaded successfully!");
       }
-
     } catch (error) {
       console.error("Error loading scene:", error);
     } finally {
@@ -39,52 +39,50 @@ const SceneViewRoomPage = () => {
 
   // This is Call back function to update object position in state
   const handleUpdateObjectPosition = (objectId, newPosition) => {
-    setObjects((prevObjects) =>
-      prevObjects.map((obj) =>
-        obj.id === objectId
-          ? {
-              ...obj,
-              position: newPosition, //attach position with object
-            }
-          : obj,
-      ),
-    );
+    setObjects((prev) => {
+      const updated = prev.map((obj) =>
+        obj.id === objectId ? { ...obj, position: newPosition } : obj,
+      );
+
+      objectsRef.current = updated;
+      return updated;
+    });
   };
 
-  const objectData = objects.map((obj) => ({
-    id: obj.id,
-    type: obj.type,
-    position: obj.position || { x: 0, y: 0, z: 0 },
-  }));
 
   const handleOnSaveScene = async () => {
     try {
-      if (objects.length === 0) {
+      if (objectsRef.current.length === 0) {
         toast.error("Please add at least one object to save the scene.");
         return;
       }
 
       setLoading(true);
 
+      const cleanObjects = objectsRef.current.map((obj) => ({
+        id: obj.id,
+        type: obj.type,
+        position: {
+          x: obj.position.x,
+          y: obj.position.y,
+          z: obj.position.z,
+        },
+      }));
+
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/scene`,
         {
-          objects: objectData,
+          objects: cleanObjects,
         },
         { withCredentials: true },
       );
-
-      if (!response.data.success) {
-        toast.error(response.data.message || "Failed to save scene.");
-        return;
-      }
 
       if (response.data.success) {
         toast.success("Scene saved successfully!");
       }
     } catch (error) {
-      console.error("Error:", error);
-      toast.error(error.response?.data?.message || "Failed to save scene.");
+      console.error(error);
+      toast.error("Failed to save scene");
     } finally {
       setLoading(false);
     }

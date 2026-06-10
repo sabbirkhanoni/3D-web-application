@@ -9,14 +9,13 @@ import RefrigeratorModel from "/models/fridge.glb?url";
 const loader = new GLTFLoader();
 
 export const addObjectToScene = (object, scene, objectsRef) => {
-  
   //check object already exists in scene
   const alreadyExists = objectsRef.current.some(
-    (obj) => obj.userData.id === object.id
+    (obj) => obj.userData.id === object.id,
   );
 
   if (alreadyExists) {
-    return; 
+    return;
   }
 
   // If position is not provided, generate random position
@@ -29,8 +28,20 @@ export const addObjectToScene = (object, scene, objectsRef) => {
       const model = gltf.scene;
 
       model.userData.id = object.id;
-      model.userData.floorY = floorY; 
+      model.userData.type = object.type;
+
+      
+      model.userData.isRoot = true;
+      model.userData.root = model;
+
+      model.traverse((child) => {
+        child.userData.id = object.id;
+        child.userData.rootModel = model;
+        child.userData.floorY = floorY;
+      });
+
       model.scale.set(scale, scale, scale);
+
       model.position.set(posX, floorY, posZ);
 
       scene.add(model);
@@ -42,23 +53,22 @@ export const addObjectToScene = (object, scene, objectsRef) => {
     case "Cube": {
       const cube = new THREE.Mesh(
         new THREE.BoxGeometry(3, 3, 3),
-        new THREE.MeshStandardMaterial({ color: 0x00ff00 })
+        new THREE.MeshStandardMaterial({ color: 0x00ff00 }),
       );
 
       cube.userData.id = object.id;
-      cube.userData.floorY = 2; 
+      cube.userData.floorY = 2;
       cube.position.set(posX, 2, posZ);
 
       scene.add(cube);
       objectsRef.current.push(cube);
-      console.log("Cube added successfully:", object.id);
       break;
     }
 
     case "Sphere": {
       const sphere = new THREE.Mesh(
         new THREE.SphereGeometry(2, 150, 50),
-        new THREE.MeshStandardMaterial({ color: 0xff0000 })
+        new THREE.MeshStandardMaterial({ color: 0xff0000 }),
       );
 
       sphere.userData.id = object.id;

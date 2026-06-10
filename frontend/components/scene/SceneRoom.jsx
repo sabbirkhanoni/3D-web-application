@@ -14,7 +14,7 @@ const SceneRoom = (props) => {
   const dragControlsRef = useRef(null);
   const orbitRef = useRef(null);
   const newObjectsRef = useRef([]);
-  const loadedObjectIdsRef = useRef(new Set()); 
+  const loadedObjectIdsRef = useRef(new Set());
 
   //Add new objects
   useEffect(() => {
@@ -26,8 +26,7 @@ const SceneRoom = (props) => {
         loadedObjectIdsRef.current.add(object.id);
       }
     });
-
-    // Update drag controls with new objects
+    
     if (dragControlsRef.current) {
       dragControlsRef.current.objects = newObjectsRef.current;
     }
@@ -46,18 +45,16 @@ const SceneRoom = (props) => {
       45,
       container.clientWidth / container.clientHeight,
       0.1,
-      1000
+      1000,
     );
     camera.position.set(0, 35, 50);
     cameraRef.current = camera;
-
 
     //renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     rendererRef.current = renderer;
     container.appendChild(renderer.domElement);
-
 
     // Orbit Controls
     const orbit = new OrbitControls(camera, renderer.domElement);
@@ -70,12 +67,11 @@ const SceneRoom = (props) => {
     orbit.update();
     orbitRef.current = orbit;
 
-
     // Drag Controls
     const dragControls = new DragControls(
       newObjectsRef.current,
       camera,
-      renderer.domElement
+      renderer.domElement,
     );
     dragControlsRef.current = dragControls;
 
@@ -92,14 +88,20 @@ const SceneRoom = (props) => {
 
     // Drag Events when dragging
     dragControls.addEventListener("drag", (event) => {
-      const obj = event.object;
+      const obj = event.object.userData.rootModel || event.object;
 
-      //get floor Y
       const floorY = obj.userData.floorY ?? 0;
+
       obj.position.y = floorY;
 
       obj.position.x = Math.max(-24, Math.min(24, obj.position.x));
       obj.position.z = Math.max(-24, Math.min(24, obj.position.z));
+
+      console.log("Dragged object:", event.object);
+      console.log("ID:", event.object.userData.id);
+      console.log("Position:", event.object.position);
+      console.log("Parent:", event.object.parent);
+      console.log("Parent UserData:", event.object.parent.userData);
 
       //Update the position in parent state
       if (onUpdateObjectPosition) {
@@ -111,10 +113,11 @@ const SceneRoom = (props) => {
       }
     });
 
-
     // Drag Events when drag end
     dragControls.addEventListener("dragend", (event) => {
       orbit.enabled = true;
+
+      const obj = event.object.userData.rootModel || event.object;
 
       event.object.traverse?.((child) => {
         if (child.material) {
@@ -122,14 +125,11 @@ const SceneRoom = (props) => {
         }
       });
 
-      //Update the position in parent state on drag end
-      if (onUpdateObjectPosition) {
-        onUpdateObjectPosition(event.object.userData.id, {
-          x: Math.round(event.object.position.x * 100) / 100,
-          y: Math.round(event.object.position.y * 100) / 100,
-          z: Math.round(event.object.position.z * 100) / 100,
-        });
-      }
+      onUpdateObjectPosition(obj.userData.id, {
+        x: obj.position.x,
+        y: obj.position.y,
+        z: obj.position.z,
+      });
     });
 
     // Lights
@@ -165,7 +165,7 @@ const SceneRoom = (props) => {
     // Back Wall
     const backWall = new THREE.Mesh(
       new THREE.PlaneGeometry(50, 15),
-      backWallMaterial
+      backWallMaterial,
     );
     backWall.position.set(0, 7.5, -25);
     scene.add(backWall);
@@ -173,7 +173,7 @@ const SceneRoom = (props) => {
     // Left Wall
     const leftWall = new THREE.Mesh(
       new THREE.PlaneGeometry(50, 15),
-      leftWallMaterial
+      leftWallMaterial,
     );
     leftWall.rotation.y = Math.PI / 2;
     leftWall.position.set(-25, 7.5, 0);
@@ -182,7 +182,7 @@ const SceneRoom = (props) => {
     // Right Wall
     const rightWall = new THREE.Mesh(
       new THREE.PlaneGeometry(50, 15),
-      rightWallMaterial
+      rightWallMaterial,
     );
     rightWall.rotation.y = -Math.PI / 2;
     rightWall.position.set(25, 7.5, 0);
@@ -207,23 +207,22 @@ const SceneRoom = (props) => {
 
     return () => {
       window.removeEventListener("resize", handleResize);
-      
-      if (container && renderer.domElement && container.contains(renderer.domElement)) {
+
+      if (
+        container &&
+        renderer.domElement &&
+        container.contains(renderer.domElement)
+      ) {
         container.removeChild(renderer.domElement);
       }
-      
+
       renderer.dispose();
       dragControls.dispose();
       orbit.dispose();
     };
   }, []);
 
-  return (
-    <div
-      ref={mountRef}
-      className="w-full h-full"
-    />
-  );
+  return <div ref={mountRef} className="w-full h-full" />;
 };
 
 export default SceneRoom;
