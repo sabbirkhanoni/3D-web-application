@@ -1,3 +1,7 @@
+
+import React from "react";
+import { useScene } from "../../context/SceneContext";
+
 const OBJECT_ICONS = {
   box: (
     <svg
@@ -42,19 +46,21 @@ const OBJECT_ICONS = {
   ),
 };
 
+
 const SceneSelectedObjectOfSideBar = ({ object, isSelected, onSelect }) => {
+  const { deleteObject } = useScene();
   const icon = OBJECT_ICONS[object.type] || OBJECT_ICONS.box;
 
   return (
     <li
       onClick={onSelect}
       className={`
-        flex items-center justify-between px-2.5 py-2 rounded-lg cursor-pointer gap-2.5
+        flex items-center justify-between px-2.5 py-2 cursor-pointer gap-2.5
         border transition-all duration-150
         ${
           isSelected
             ? "bg-violet-500/15 border-violet-400/35"
-            : "bg-transparent hover:bg-white border-white/10"
+            : "bg-transparent hover:bg-white/10 hover:rounded-lg border-white/10"
         }
       `}
     >
@@ -92,9 +98,10 @@ const SceneSelectedObjectOfSideBar = ({ object, isSelected, onSelect }) => {
       <button
         onClick={(e) => {
           e.stopPropagation();
+          deleteObject(object.id);
         }}
         className={`
-          w-[30px] h-[30px] flex items-center justify-center rounded-md shrink-0
+          w-[30px] h-[30px] cursor-pointer flex items-center justify-center rounded-md shrink-0
           transition-all duration-150
         bg-red-500/10 text-white border border-red-400
           ${isSelected ? "text-violet-400/50" : "text-gray-600"}

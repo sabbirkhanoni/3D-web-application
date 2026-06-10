@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import SceneRoom from "../components/scene/SceneRoom";
 import axios from "axios";
 import { useScene } from "../context/SceneContext";
+import ConfirmationModal from "../components/ConfirmationModel";
 
 const SceneViewRoomPage = () => {
   const { objects, setObjects, selectedObjectId, setSelectedObjectId } =
@@ -12,9 +13,10 @@ const SceneViewRoomPage = () => {
   const [openAddObjectDialogBox, setOpenAddObjectDialogBox] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isLoadingScene, setIsLoadingScene] = useState(false);
+  const [confirmClearModel, setConfirmClearModel] = useState(false);
   const objectsRef = useRef([]);
 
-  const loadSavedScene = async () => {
+  const fetchSavedScene = async () => {
     try {
       setIsLoadingScene(true);
 
@@ -26,7 +28,6 @@ const SceneViewRoomPage = () => {
       if (response.data.success) {
         setObjects(response.data.data.objects);
         objectsRef.current = response.data.data.objects;
-        toast.success("Scene loaded successfully!");
       }
     } catch (error) {
       console.error("Error loading scene:", error);
@@ -36,20 +37,8 @@ const SceneViewRoomPage = () => {
   };
 
   useEffect(() => {
-    loadSavedScene();
+    fetchSavedScene();
   }, []);
-
-  // This is Call back function to update object position in state
-  const handleUpdateObjectPosition = (objectId, newPosition) => {
-    setObjects((prev) => {
-      const updated = prev.map((obj) =>
-        obj.id === objectId ? { ...obj, position: newPosition } : obj,
-      );
-
-      objectsRef.current = updated;
-      return updated;
-    });
-  };
 
   const handleOnSaveScene = async () => {
     try {
@@ -89,20 +78,15 @@ const SceneViewRoomPage = () => {
     }
   };
 
-  const handleDeleteObject = (objectId) => {
-    if (!objectId) {
-      toast.error("Select an object first");
-      return;
-    }
-
+  // This is Call back function to update object position in state
+  const handleUpdateObjectPosition = (objectId, newPosition) => {
     setObjects((prev) => {
-      const updated = prev.filter((obj) => obj.id !== objectId);
+      const updated = prev.map((obj) =>
+        obj.id === objectId ? { ...obj, position: newPosition } : obj,
+      );
       objectsRef.current = updated;
       return updated;
     });
-
-    setSelectedObjectId(null);
-    toast.success("Object deleted successfully!");
   };
 
   return (
@@ -156,16 +140,12 @@ const SceneViewRoomPage = () => {
             </button>
 
             <button
-              onClick={() => handleDeleteObject(selectedObjectId)}
+              onClick={() => setConfirmClearModel(true)}
               className={`
                 flex items-center justify-center gap-2
                 text-sm font-medium rounded-lg py-2 px-3
                 transition-all duration-200
-                ${
-                  selectedObjectId
-                    ? "bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 hover:border-red-500/50 text-red-400 cursor-pointer"
-                    : "bg-red-500/5 border border-red-500/20 text-red-300 cursor-not-allowed opacity-50"
-                }
+               bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 hover:border-red-500/50 text-red-400 cursor-pointer" 
               `}
             >
               <svg
@@ -181,7 +161,7 @@ const SceneViewRoomPage = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-              Delete Object
+              Clear Scene
             </button>
 
             <button
@@ -224,6 +204,10 @@ const SceneViewRoomPage = () => {
           />
         </div>
       </div>
+
+      {confirmClearModel && (
+        <ConfirmationModal onClose={() => setConfirmClearModel(false)} />
+      )}
     </section>
   );
 };
