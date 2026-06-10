@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import SceneRoom from "../components/scene/SceneRoom";
 import axios from "axios";
 import { useScene } from "../context/SceneContext";
+import AxiosToastError from "../utils/AxiosToastError";
 import ConfirmationModal from "../components/ConfirmationModel";
 
 const SceneViewRoomPage = () => {
@@ -30,7 +31,7 @@ const SceneViewRoomPage = () => {
         objectsRef.current = response.data.data.objects;
       }
     } catch (error) {
-      console.error("Error loading scene:", error);
+      console.log("Error fetching saved scene:", error);
     } finally {
       setIsLoadingScene(false);
     }
@@ -71,8 +72,7 @@ const SceneViewRoomPage = () => {
         toast.success("Scene saved successfully!");
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Failed to save scene");
+      AxiosToastError(error); 
     } finally {
       setLoading(false);
     }

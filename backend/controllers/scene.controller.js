@@ -32,7 +32,7 @@ export const getSceneByUserIdController = async (request, response) => {
     const scene = await getSceneByUserIdService(userId);
     if (!scene) {
       return response.status(404).json({
-        message: "Scene not found",
+        message: "Build your scene",
         error: true,
         success: false
       });

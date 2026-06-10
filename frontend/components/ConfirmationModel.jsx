@@ -1,26 +1,46 @@
-import React from 'react'
-import { FaTrash } from 'react-icons/fa';
-import { RiDeleteBack2Fill } from 'react-icons/ri';
+import React from "react";
+import { FaTrash } from "react-icons/fa";
+import axios from "axios";
+import AxiosToastError from "../utils/AxiosToastError";
+import toast from "react-hot-toast";
 
 const ConfirmationModal = (props) => {
-  const {onClose} = props;
+  const { onClose } = props;
 
-  const handleClearScene = () => {
-    // call API to clear scene
-  }
+  const handleClearScene = async () => {
+    try {
+      const response = await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/scene`,
+        { withCredentials: true },
+      );
+      console.log("response",response);
+      if (response.data.error) {
+        toast.error(response.data.message);
+        return;
+      }
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+        onClose();
+      }
+    } catch (error) {
+      AxiosToastError(error);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55">
       <div className="bg-[#b8bbd0] border border-white/10 rounded-xl p-6 w-[340px] flex flex-col gap-5">
-        
         <div className="flex items-start gap-3">
           <div className="w-[38px] h-[38px] rounded-lg bg-red-400 text-white font-semibold flex items-center justify-center shrink-0">
             <FaTrash size={18} />
           </div>
           <div className="flex flex-col gap-1">
-            <p className="text-[15px] font-medium text-black">Are you sure you want to clear all objects?</p>
+            <p className="text-[15px] font-medium text-black">
+              Are you sure you want to clear all objects?
+            </p>
             <p className="text-[13px] text-black italic">
-                This action cannot be undone.
+              This action cannot be undone.
             </p>
           </div>
         </div>
@@ -39,7 +59,6 @@ const ConfirmationModal = (props) => {
             Delete
           </button>
         </div>
-
       </div>
     </div>
   );
