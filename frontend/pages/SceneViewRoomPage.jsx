@@ -89,15 +89,20 @@ const SceneViewRoomPage = () => {
   };
 
   const handleDeleteObject = (objectId) => {
-    if (!objectId) {
-      toast.error("Select an object first");
-      return;
-    }
+  if (!objectId) {
+    toast.error("Select an object first");
+    return;
+  }
 
-    setObjects((prev) => prev.filter((obj) => obj.id !== objectId));
-    setSelectedObjectId(null);
-    toast.success("Object deleted successfully!");
-  };
+  setObjects((prev) => {
+    const updated = prev.filter((obj) => obj.id !== objectId);
+    objectsRef.current = updated; // 🔥 এইটা missing ছিল
+    return updated;
+  });
+
+  setSelectedObjectId(null);
+  toast.success("Object deleted successfully!");
+};
 
   return (
     <section className="h-full w-full overflow-hidden flex flex-col bg-[#0d0e24]">
@@ -212,6 +217,7 @@ const SceneViewRoomPage = () => {
           <SceneRoom
             objects={objects}
             onUpdateObjectPosition={handleUpdateObjectPosition}
+            onSelectObject={setSelectedObjectId} 
           />
         </div>
       </div>

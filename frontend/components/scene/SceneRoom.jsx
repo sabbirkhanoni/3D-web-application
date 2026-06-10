@@ -5,7 +5,7 @@ import { DragControls } from "three/examples/jsm/controls/DragControls";
 import { addObjectToScene } from "../../utils/LoadObjectsToAddScene";
 
 const SceneRoom = (props) => {
-  const { objects, onUpdateObjectPosition } = props;
+  const { objects, onUpdateObjectPosition, onSelectObject } = props;
 
   const mountRef = useRef(null);
   const sceneRef = useRef(null); // Store scene to used in other components
@@ -15,6 +15,33 @@ const SceneRoom = (props) => {
   const orbitRef = useRef(null);
   const newObjectsRef = useRef([]);
   const loadedObjectIdsRef = useRef(new Set());
+  const selectedMeshRef = useRef(null);
+  // Raycaster for click selection
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+
+  //Remove deleted objects form scene
+  useEffect(() => {
+    if (!sceneRef.current) return;
+
+    const currentIds = new Set(objects.map((o) => o.id));
+
+    //Remove objects from scene which are not in current objects list
+    newObjectsRef.current = newObjectsRef.current.filter((mesh) => {
+      const id = mesh.userData.id;
+      if (!currentIds.has(id)) {
+        sceneRef.current.remove(mesh); //Remove
+        loadedObjectIdsRef.current.delete(id); //Remove from loaded set
+        return false;
+      }
+      return true;
+    });
+
+    // Update DragControls
+    if (dragControlsRef.current) {
+      dragControlsRef.current.objects = newObjectsRef.current;
+    }
+  }, [objects]);
 
   //Add new objects
   useEffect(() => {
@@ -26,7 +53,7 @@ const SceneRoom = (props) => {
         loadedObjectIdsRef.current.add(object.id);
       }
     });
-    
+
     if (dragControlsRef.current) {
       dragControlsRef.current.objects = newObjectsRef.current;
     }
@@ -96,13 +123,7 @@ const SceneRoom = (props) => {
 
       obj.position.x = Math.max(-24, Math.min(24, obj.position.x));
       obj.position.z = Math.max(-24, Math.min(24, obj.position.z));
-
-      console.log("Dragged object:", event.object);
-      console.log("ID:", event.object.userData.id);
-      console.log("Position:", event.object.position);
-      console.log("Parent:", event.object.parent);
-      console.log("Parent UserData:", event.object.parent.userData);
-
+      
       //Update the position in parent state
       if (onUpdateObjectPosition) {
         onUpdateObjectPosition(obj.userData.id, {
@@ -197,6 +218,29 @@ const SceneRoom = (props) => {
 
     window.addEventListener("resize", handleResize);
 
+    const handleClick = (event) => {
+      const rect = container.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / container.clientWidth) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / container.clientHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(
+        newObjectsRef.current,
+        true,
+      );
+
+      if (intersects.length > 0) {
+        const hit = intersects[0].object;
+        const rootModel = hit.userData.rootModel || hit;
+        const objectId = rootModel.userData.id;
+        onSelectObject?.(objectId);
+      } else {
+        onSelectObject?.(null);
+      }
+    };
+
+    container.addEventListener("click", handleClick);
+
     const animate = () => {
       requestAnimationFrame(animate);
       orbit.update();
@@ -219,6 +263,7 @@ const SceneRoom = (props) => {
       renderer.dispose();
       dragControls.dispose();
       orbit.dispose();
+      container.removeEventListener("click", handleClick);
     };
   }, []);
 
