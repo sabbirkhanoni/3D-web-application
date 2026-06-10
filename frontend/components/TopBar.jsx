@@ -18,7 +18,7 @@ const TopBar = () => {
 
       if (response.data.success) {
         toast.success(response.data.message);
-        navigate("/login");
+        navigate("/");
       } else {
         console.error("Logout failed:", response.data.message);
       }

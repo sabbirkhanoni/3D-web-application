@@ -3,7 +3,7 @@ import PositionViewOfSideBar from "./PositionViewOfSideBar";
 
 const SelectedObjectPositionDetailsOfSideBar = (props) => {
 
-  const { objects, selectedId, deleteObject } = props;
+  const { objects, selectedId } = props;
 
   const selected = objects.find((o) => o.id === selectedId);
   if (!selected) return null;
