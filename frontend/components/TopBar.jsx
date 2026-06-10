@@ -3,10 +3,12 @@ import React from "react";
 import toast from "react-hot-toast";
 import { RiLogoutCircleRFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
+import {useAuth} from "../context/AuthContext";
 
 const TopBar = () => {
 
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -41,9 +43,9 @@ const TopBar = () => {
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 mr-5">
             <div className="w-8 h-8 rounded-full bg-violet-500 flex items-center justify-center text-white text-xs font-semibold uppercase select-none border-3 border-white">
-              {"AC"}
+              {user?.name ? user.name.charAt(0) : "U"}{user?.name ? user.name.charAt(1) : "U"}
             </div>
-            <span className="text-white text-xs font-medium">User</span>
+            <span className="text-white text-xs font-medium">{user?.name}</span>
           </div>
 
           <button

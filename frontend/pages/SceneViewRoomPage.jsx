@@ -72,7 +72,7 @@ const SceneViewRoomPage = () => {
         toast.success("Scene saved successfully!");
       }
     } catch (error) {
-      AxiosToastError(error); 
+      AxiosToastError(error);
     } finally {
       setLoading(false);
     }

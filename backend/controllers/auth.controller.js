@@ -1,11 +1,12 @@
-import { request } from 'express';
 import {
     signUpService,
     loginService,
     forgetPasswordRequestService,
     verifyOTPService,
-    resetPasswordService
+    resetPasswordService,
+    getMeService
 } from '../services/auth.service.js';
+import { get } from 'mongoose';
 
 export const signUpController = async (request, response) => {
     try {
@@ -71,11 +72,19 @@ export const getMeController = async (request, response) => {
                 success: false,
             });
         }
+        const user = await getMeService(userId);
+        if (!user) {
+            return response.status(404).json({
+                message: 'User not found',
+                error: true,
+                success: false,
+            });
+        }
         return response.status(200).json({
             message: 'User authenticated',
             error: false,
             success: true,
-            userId: userId,
+            user: user
         });
     } catch (error) {
         return response.status(500).json({

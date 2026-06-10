@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
-import {FaRegEnvelope, FaLock, FaRegEye, FaRegEyeSlash, FaGoogle } from 'react-icons/fa';
-import toast from 'react-hot-toast';
-import AxiosToastError from '../utils/AxiosToastError';
-import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import {
+  FaRegEnvelope,
+  FaLock,
+  FaRegEye,
+  FaRegEyeSlash,
+  FaGoogle,
+} from "react-icons/fa";
+import toast from "react-hot-toast";
+import AxiosToastError from "../utils/AxiosToastError";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "/vrsb.png";
 
 const LoginPage = () => {
-
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({
     email: "",
@@ -27,31 +32,32 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Send the data to the backend using Custom Axios
-    try{
-    const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
-      email: data.email,
-      password: data.password,
-    },{ withCredentials: true });
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
+        {
+          email: data.email,
+          password: data.password,
+        },
+        { withCredentials: true },
+      );
 
-    if(response.data.error){
-      toast.error(response.data.message)
-    }
+      if (response.data.error) {
+        toast.error(response.data.message);
+      }
 
-    if(response.data.success){
-      toast.success(response.data.message)
-      setData({
-        email: "",
-        password: "",
-      })
-      navigate('/dashboard');
-    }
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setData({
+          email: "",
+          password: "",
+        });
+        navigate("/dashboard");
+      }
     } catch (error) {
-      AxiosToastError(error)
+      AxiosToastError(error);
     }
-  }
-
+  };
 
   //check all the filds are filled then change the color of the Create Account button
   const validValueOfEveryInput = Object.values(data).every((item) => item);
@@ -68,22 +74,26 @@ const LoginPage = () => {
             <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-200 rounded-full opacity-20 animate-pulse"></div>
 
             <div className="relative">
-                  {/* Logo added at the top */}
-                  <div className="flex justify-center mb-6">
-                    <img
-                      src={logo}
-                      width={80}
-                      height={40}
-                      alt="logo"
-                      className="lg:hidden"
-                    />
-                  </div>
+              {/* Logo added at the top */}
+              <div className="flex justify-center mb-6">
+                <img
+                  src={logo}
+                  width={80}
+                  height={40}
+                  alt="logo"
+                  className="lg:hidden"
+                />
               </div>
+            </div>
 
             <div className="relative">
               <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Login Account</h1>
-                <p className="text-gray-600">Join our community of VR enthusiasts</p>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  Login Account
+                </h1>
+                <p className="text-gray-600">
+                  Join our community of VR enthusiasts
+                </p>
               </div>
 
               <form className="space-y-3" onSubmit={handleSubmit}>
@@ -135,34 +145,39 @@ const LoginPage = () => {
                   </div>
                 </div>
 
-
                 <div>
-                  <Link to={"/forgot-password"} className="block text-lg text-right text-gray-600 hover:text-blue-700 font-medium mt-0">
+                  <Link
+                    to={"/forgot-password"}
+                    className="block text-lg text-right text-gray-600 hover:text-blue-700 font-medium mt-0"
+                  >
                     Forgot Password?
                   </Link>
                 </div>
 
-                <button disabled={!validValueOfEveryInput}
+                <button
+                  disabled={!validValueOfEveryInput}
                   type="submit"
-                  className= {` ${validValueOfEveryInput ? "from-blue-500 via-indigo-600 to-purple-600 text-white" : "bg-gray-400 hover:bg-gray-500"} w-full bg-gradient-to-r py-3 px-4 rounded-xl hover:opacity-90 focus:ring-4 focus:ring-blue-200 transition-all duration-200 font-medium transform hover:scale-[1.02] active:scale-[0.98] shadow-lg`}
+                  className={` ${validValueOfEveryInput ? "from-blue-500 via-indigo-600 to-purple-600 text-white" : "bg-gray-400 hover:bg-gray-500"} w-full bg-gradient-to-r py-3 px-4 rounded-xl hover:opacity-90 focus:ring-4 focus:ring-blue-200 transition-all duration-200 font-medium transform hover:scale-[1.02] active:scale-[0.98] shadow-lg`}
                 >
                   Sign In
                 </button>
               </form>
 
               <p className="text-center text-sm mt-7 text-gray-600">
-                  Are You New Here? Create New Account{" "}
-                  <Link to={"/signup"} className="text-[#1370ebfa] hover:text-blue-900 font-medium">
-                    Sign Up
-                  </Link>
+                Are You New Here? Create New Account{" "}
+                <Link
+                  to={"/signup"}
+                  className="text-[#1370ebfa] hover:text-blue-900 font-medium"
+                >
+                  Sign Up
+                </Link>
               </p>
-
             </div>
           </div>
         </div>
       </div>
     </section>
   );
-}
+};
 
 export default LoginPage;
