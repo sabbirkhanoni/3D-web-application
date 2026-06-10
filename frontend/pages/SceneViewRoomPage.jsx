@@ -3,11 +3,12 @@ import AddObjectDialogBox from "../components/dashboard/AddObjectDialogBox";
 import toast from "react-hot-toast";
 import SceneRoom from "../components/scene/SceneRoom";
 import axios from "axios";
+import { useScene } from "../context/SceneContext";
 
 const SceneViewRoomPage = () => {
+  const { objects, setObjects, selectedObjectId, setSelectedObjectId } = useScene();
+
   const [openAddObjectDialogBox, setOpenAddObjectDialogBox] = useState(false);
-  const [objects, setObjects] = useState([]);
-  const [selectedObjectId, setSelectedObjectId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isLoadingScene, setIsLoadingScene] = useState(false);
   const objectsRef = useRef([]);
