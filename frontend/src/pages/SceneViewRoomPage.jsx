@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import AddObjectDialogBox from "../components/dashboard/AddObjectDialogBox";
+import AddObjectDialogBox from '../components/dashboard/AddObjectDialogBox'
 import toast from "react-hot-toast";
 import SceneRoom from "../components/scene/SceneRoom";
 import axios from "axios";
 import { useScene } from "../context/SceneContext";
 import AxiosToastError from "../utils/AxiosToastError";
-import ConfirmationModal from "../components/ConfirmationModel";
+import ConfirmationModal from "../components/ConfirmationModel"
 
 const SceneViewRoomPage = () => {
   const { objects, setObjects, selectedObjectId, setSelectedObjectId } =

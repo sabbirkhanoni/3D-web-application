@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import App from "../src/App";
+import App from "../App";
 import LandingPage from "../pages/LandingPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import SignupPage from "../pages/SignupPage";
@@ -8,7 +8,7 @@ import ProtectRoute from "../layouts/ProtectRoute";
 import Dashboard from "../layouts/Dashboard";
 import SceneViewRoomPage from "../pages/SceneViewRoomPage";
 import ForgotPasswordPage from "../pages/ForgetPasswordPage";
-import OTPverifyPage from "../pages/OTPverifyPage";
+import OTPverifyPage from '../pages/OTPverifyPage';
 
 const router = createBrowserRouter([
   {
