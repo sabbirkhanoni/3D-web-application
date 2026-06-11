@@ -22,7 +22,7 @@ const LandingPage = () => {
         </div>
 
         {/* Headline */}
-        <h1 className="font-display font-black leading-[1.05] animate-fade-up [animation-delay:100ms] [animation-fill-mode:both] text-[clamp(2.8rem,8vw,6rem)] text-[#f2f0ff]">
+        <h2 className="font-display font-black leading-[1.05] animate-fade-up [animation-delay:100ms] [animation-fill-mode:both] text-[clamp(2.8rem,8vw,6rem)] text-[#f2f0ff]">
           Build{' '}
           <span className="bg-gradient-to-r from-[#5b73ff] to-[#a855f7] bg-clip-text text-transparent">
             3D Virtual
@@ -30,7 +30,8 @@ const LandingPage = () => {
           <br />
           Worlds,<br />
           <em className="not-italic text-[#f2f0ff]/60">In-Browser.</em>
-        </h1>
+          <br />
+        </h2>
 
         <p className="text-lg max-w-xl mt-6 leading-relaxed animate-fade-up [animation-delay:200ms] text-gray-400">
           The professional-grade 3D scene system that lets you create, import, and manage
@@ -39,7 +40,7 @@ const LandingPage = () => {
 
 
         <div className="flex flex-wrap gap-4 mt-10 justify-center animate-fade-up [animation-delay:300ms] [animation-fill-mode:both]">
-          <Link to="/register">
+          <Link to="/signup">
             <button className="px-8 py-3.5 text-base bg-white text-gray-900 rounded-full hover:bg-gray-100 transition">
               <span>Start Building Free</span>
             </button>
@@ -74,10 +75,10 @@ const LandingPage = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          <FeatureCard icon={Globe} color="#5b73ff" title="3D WebGL Viewport" description="Real-time rendering with orbit controls, perspective camera, and ambient lighting — all at 60fps." />
+          <FeatureCard icon={Globe} color="#5b73ff" title="3D WebGL Viewport" description="Real-time rendering with orbit controls, perspective camera, and ambient lighting - all at 60fps." />
           <FeatureCard icon={Move3d} color="#9333ea" title="Drag & Drop Editor" description="Click any object to select it. Drag to reposition. Live coordinate sync in the properties panel." />
           <FeatureCard icon={CloudUpload} color="#00d9f5" title="Cloud Scene Persistence" description="Every scene auto-saves to MongoDB. Sign in on any device and your world is waiting." />
-          <FeatureCard icon={Boxes} color="#f59e0b" title="GLB Model Support" description="Import freely available .glb and .gltf models from the web. Duck, car, furniture — anything goes." />
+          <FeatureCard icon={Boxes} color="#f59e0b" title="GLB Model Support" description="Import freely available .glb and .gltf models from the web. Duck, car, furniture - anything goes." />
           <FeatureCard icon={Code2} color="#10b981" title="Developer-First API" description="Full REST API with session auth. Integrate VR Scene Builder into your own products." />
           <FeatureCard icon={Layers3} color="#f43f5e" title="Multi-Scene Management" description="Organize scenes into projects. Each scene is a self-contained JSON snapshot you can export." />
         </div>

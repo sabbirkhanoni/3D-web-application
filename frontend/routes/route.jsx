@@ -7,6 +7,7 @@ import LoginPage from "../pages/LoginPage";
 import ProtectRoute from "../layouts/ProtectRoute";
 import Dashboard from "../layouts/Dashboard";
 import SceneViewRoomPage from "../pages/SceneViewRoomPage";
+import ForgotPasswordPage from "../pages/ForgetPasswordPage";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <LoginPage />,
+      },
+      {
+        path: "forgot-password",
+        element: <ForgotPasswordPage />,
       },
       {
         path: "dashboard",
