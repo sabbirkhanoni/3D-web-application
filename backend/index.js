@@ -31,7 +31,9 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         httpOnly: true, //hide cookie from client-side JavaScript
-        secure: false, // true in production (HTTPS)
+        secure: process.env.NODE_ENV === 'production', //use secure cookies in production
+        maxAge: 1000 * 60 * 60 * 24, //cookie expires in 1 day
+        sameSite: 'none' //allow cross-site cookies
     }
 }));
 
