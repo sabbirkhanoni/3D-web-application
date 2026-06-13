@@ -9,6 +9,7 @@ import Dashboard from "../layouts/Dashboard";
 import SceneViewRoomPage from "../pages/SceneViewRoomPage";
 import ForgotPasswordPage from "../pages/ForgetPasswordPage";
 import OTPverifyPage from '../pages/OTPverifyPage';
+import ResetPasswordPage from "../pages/ResetPasswordPage";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: "otp-verify",
         element: <OTPverifyPage />,
+      },
+      {
+        path: "reset-password",
+        element: <ResetPasswordPage />,
       },
       {
         path: "dashboard",

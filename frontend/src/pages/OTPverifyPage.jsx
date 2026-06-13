@@ -65,7 +65,7 @@ function OTPverifyPage() {
   }
 
   return (
-    <div className="mt-[-130px] min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="mt-[-130px] min-h-screen bg-gradient-to-br from-[#05060f] via-[#222965] to-[#05060f]">
       {/* Main Content */}
       <div className="container mx-auto px-4 pt-2 pb-5 flex items-center justify-center min-h-screen">
         <div className="w-full max-w-md">
