@@ -29,6 +29,8 @@ app.use(morgan("dev"));
 //session middleware
 app.set("trust proxy", 1);
 
+const isProduction = process.env.NODE_ENV === "production";
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -36,8 +38,8 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: true, // always true in Vercel HTTPS
-      sameSite: "none", // cross-site required
+      secure: isProduction, // set secure to true in production
+      sameSite: isProduction ? "none" : "lax", // set sameSite to 'none' in production
       maxAge: 1000 * 60 * 60 * 24,
     },
   }),
