@@ -40,7 +40,7 @@ const SceneViewRoomPage = () => {
   const handleOnSubscribe = async () => {
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/subscribe`,
+        `${import.meta.env.VITE_API_URL}/api/subscription/initiate`,
         { withCredentials: true },
       );
 
@@ -50,6 +50,7 @@ const SceneViewRoomPage = () => {
       }
 
       if (response.data.success) {
+        window.location.href = response.data.url // Redirect to the SSLCommerz payment gateway Provider
         toast.success(response.data.message);
       }
     } catch (error) {
