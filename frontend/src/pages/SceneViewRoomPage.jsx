@@ -41,6 +41,7 @@ const SceneViewRoomPage = () => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/subscription/initiate`,
+        {}, // No body needed for this request, handled entirely on the backend
         { withCredentials: true },
       );
 
