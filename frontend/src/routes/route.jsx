@@ -10,6 +10,9 @@ import SceneViewRoomPage from "../pages/SceneViewRoomPage";
 import ForgotPasswordPage from "../pages/ForgetPasswordPage";
 import OTPverifyPage from '../pages/OTPverifyPage';
 import ResetPasswordPage from "../pages/ResetPasswordPage";
+import PaymentSuccessPage from "../pages/PaymentSuccessPage";
+import PaymentCancelPage from "../pages/PaymentCancel";
+import PaymentFailedPage from "../pages/PaymentFailed";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +42,18 @@ const router = createBrowserRouter([
       {
         path: "reset-password",
         element: <ResetPasswordPage />,
+      },
+      {
+        path: "payment-success",
+        element: <PaymentSuccessPage />,
+      },
+      {
+        path: "payment-failed",
+        element: <PaymentFailedPage />,
+      },
+      {
+        path: "payment-cancel",
+        element: <PaymentCancelPage />,
       },
       {
         path: "dashboard",
