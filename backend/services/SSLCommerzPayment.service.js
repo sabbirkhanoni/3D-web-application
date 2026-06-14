@@ -19,7 +19,7 @@ export const createSubscriptionPaymentService = async (userId) => {
   }
 
   if (user.subscriptionStatus === "premium") {
-    throw new Error("User already subscribed");
+    throw new Error("You are already subscribed");
   }
 
   const amount = subscriptionAmount();

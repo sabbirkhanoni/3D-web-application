@@ -1,14 +1,29 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { useAuth } from "../../context/AuthContext";
 import { RiCloseCircleFill } from "react-icons/ri";
 
 const AddObjectDialogBox = (props) => {
   const { onClose, onAddObject } = props;
   const [selectedObject, setSelectedObject] = useState("Cube");
+  const { user } = useAuth();
 
-  const objects = ["Cube", "Sphere", "Wardrobe", "Table", "Sofa", "Refrigerator", "Bed"];
+  const objects = [
+    "Cube",
+    "Sphere",
+    "Rectangle",
+    "Wardrobe",
+    "Table",
+    "Sofa",
+    "Refrigerator",
+    "Bed",
+  ];
 
   const handleAddObjectToScene = () => {
+    if (selectedObject === "Rectangle" && user.subscriptionStatus !== "premium") {
+      toast.error("This object requires a premium subscription.");
+      return;
+    }
     onAddObject(selectedObject);
     toast.success("Object added to scene successfully!");
     onClose();
@@ -39,7 +54,15 @@ const AddObjectDialogBox = (props) => {
               onChange={(e) => setSelectedObject(e.target.value)}
               className="w-4 h-4"
             />
-            <span className="text-white">{object}</span>
+            <span className="text-white font-medium flex items-center gap-2">
+              {object}
+
+              {object === "Rectangle" && (
+                <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-md">
+                  Premium
+                </span>
+              )}
+            </span>
           </label>
         ))}
       </div>

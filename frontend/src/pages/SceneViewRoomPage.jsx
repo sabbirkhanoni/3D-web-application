@@ -9,7 +9,7 @@ import AxiosToastError from "../utils/AxiosToastError";
 import ConfirmationModal from "../components/ConfirmationModel";
 
 const SceneViewRoomPage = () => {
-  const { objects, setObjects, selectedObjectId, setSelectedObjectId } =
+  const { objects, setObjects, fetchSavedScene, setSelectedObjectId } =
     useScene();
 
   const { user } = useAuth();
@@ -18,26 +18,6 @@ const SceneViewRoomPage = () => {
   const [isLoadingScene, setIsLoadingScene] = useState(false);
   const [confirmClearModel, setConfirmClearModel] = useState(false);
   const objectsRef = useRef([]);
-
-  const fetchSavedScene = async () => {
-    try {
-      setIsLoadingScene(true);
-
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/scene`,
-        { withCredentials: true },
-      );
-
-      if (response.data.success) {
-        setObjects(response.data.data.objects);
-        objectsRef.current = response.data.data.objects;
-      }
-    } catch (error) {
-      console.log("Error fetching saved scene:", error);
-    } finally {
-      setIsLoadingScene(false);
-    }
-  };
 
   const handleOnSubscribe = async () => {
     try {
@@ -219,15 +199,16 @@ const SceneViewRoomPage = () => {
             </button>
 
             <button
+              disabled={user && user.subscriptionStatus === "premium"}
               onClick={handleOnSubscribe}
               className={`
                 flex items-center justify-center gap-2
                 text-sm font-medium rounded-lg py-2 px-3
                 transition-all duration-200
-              text-white cursor-pointer ${
+              text-white ${
                 user && user.subscriptionStatus === "premium"
                   ? "bg-green-500/50 border-green-600 cursor-not-allowed"
-                  : "bg-yellow-500 hover:bg-yellow-600 border-yellow-600"
+                  : "bg-pink-700 hover:bg-pink-600 border border-pink-500/30 hover:border-pink-500/50 cursor-pointer"
               }
               `}
             >

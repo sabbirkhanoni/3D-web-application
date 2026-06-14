@@ -3,8 +3,10 @@ import { FaTrash } from "react-icons/fa";
 import axios from "axios";
 import AxiosToastError from "../utils/AxiosToastError";
 import toast from "react-hot-toast";
+import { useScene } from "../context/SceneContext";
 
 const ConfirmationModal = (props) => {
+  const { fetchSavedScene, setObjects } = useScene();
   const { onClose } = props;
 
   const handleClearScene = async () => {
@@ -13,7 +15,7 @@ const ConfirmationModal = (props) => {
         `${import.meta.env.VITE_API_URL}/api/scene`,
         { withCredentials: true },
       );
-      console.log("response",response);
+
       if (response.data.error) {
         toast.error(response.data.message);
         return;
@@ -21,6 +23,8 @@ const ConfirmationModal = (props) => {
 
       if (response.data.success) {
         toast.success(response.data.message);
+        fetchSavedScene();
+        setObjects([]);
         onClose();
       }
     } catch (error) {

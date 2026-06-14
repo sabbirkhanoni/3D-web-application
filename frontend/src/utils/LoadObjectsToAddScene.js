@@ -80,6 +80,21 @@ export const addObjectToScene = (object, scene, objectsRef) => {
       break;
     }
 
+    case "Rectangle": {
+        const rectangle = new THREE.Mesh(
+          new THREE.BoxGeometry(9, 2, 0.5),
+          new THREE.MeshStandardMaterial({ color: 0xffd400 }),
+        );
+
+        rectangle.userData.id = object.id;
+        rectangle.userData.floorY = 1;
+        rectangle.position.set(posX, 1, posZ);
+
+        scene.add(rectangle);
+        objectsRef.current.push(rectangle);
+        break;
+    }
+
     case "Wardrobe":
       addModel(WardrobeModel, 4, 0);
       break;
