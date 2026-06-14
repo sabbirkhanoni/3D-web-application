@@ -70,6 +70,10 @@ export const subscriptionSuccessService = async ({ tran_id }) => {
       status: "success",
     },
   );
+
+  const payment = await Payment.findOne({
+    transactionId: tran_id,
+  });
   await User.findByIdAndUpdate(payment.userId, {
     subscriptionStatus: "premium",
     subscriptionStartDate: new Date(),

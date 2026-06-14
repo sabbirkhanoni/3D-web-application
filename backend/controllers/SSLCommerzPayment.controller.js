@@ -26,8 +26,9 @@ export const initiateSubscriptionController = async (request, response) => {
 };
 
 export const subscriptionSuccessController = async (request, response) => {
+  const userId = request.session.userId;
   const { tran_id } = request.params;
-  await subscriptionSuccessService({ tran_id });
+  await subscriptionSuccessService({ tran_id, userId });
   return response.redirect(
     `${process.env.FRONTEND_URL}/success/${tran_id}`,
   );
