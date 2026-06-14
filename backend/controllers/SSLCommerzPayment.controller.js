@@ -8,6 +8,7 @@ import { createSubscriptionPaymentService,
 export const initiateSubscriptionController = async (request, response) => {
   try {
     const userId = request.session.userId;
+    console.log("User ID from session:", userId);
     const paymentUrl = await createSubscriptionPaymentService(userId);
 
     return response.status(200).json({

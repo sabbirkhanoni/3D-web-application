@@ -5,15 +5,15 @@ import {
   subscriptionCancelController,
   subscriptionIPNController,
 } from "../controllers/SSLCommerzPayment.controller.js";
+import { isAuthenticated } from "../middleware/isAuthenticated.js";
+import { Router } from "express";
 
-import express from "express";
+const router = Router();
 
-const router = express.Router();
-
-router.post("/initiate", initiateSubscriptionController);
-router.get("/success/:tran_id", subscriptionSuccessController);
-router.get("/failed/:tran_id", subscriptionFailedController);
-router.get("/cancel/:tran_id", subscriptionCancelController);
+router.post("/initiate", isAuthenticated, initiateSubscriptionController);
+router.route("/success/:tran_id").get(subscriptionSuccessController).post(subscriptionSuccessController);
+router.route("/failed/:tran_id").get(subscriptionFailedController).post(subscriptionFailedController);
+router.route("/cancel/:tran_id").get(subscriptionCancelController).post(subscriptionCancelController);
 router.post("/ipn", subscriptionIPNController);
 
 export default router;
