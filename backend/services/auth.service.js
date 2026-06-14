@@ -70,8 +70,8 @@ export const getMeService = async (userId) => {
     throw new Error("User ID is required");
   }
 
-  //Password field will not be returned in the response
-  return await UserModel.findById(userId).select("-password");
+  //Password and OTP related fields are excluded from the response for security reasons
+  return await UserModel.findById(userId).select("-password -otp -otpExpiry");
 };
 
 export const forgetPasswordRequestService = async (payload) => {

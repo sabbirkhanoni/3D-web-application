@@ -246,7 +246,7 @@ const SceneViewRoomPage = () => {
               </svg>
               {
                 user && user.subscriptionStatus === "premium"
-                  ? "Already Premium"
+                  ? "Premium User"
                   : "Subscription with 500 BDT"
               }
             </button>
