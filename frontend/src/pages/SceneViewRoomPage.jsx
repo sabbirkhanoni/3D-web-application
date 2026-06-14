@@ -37,6 +37,26 @@ const SceneViewRoomPage = () => {
     }
   };
 
+  const handleOnSubscribe = async () => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/subscribe`,
+        { withCredentials: true },
+      );
+
+      if (response.data.error) {
+        toast.error(response.data.message);
+        return;
+      }
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      AxiosToastError(error);
+    }
+  };
+
   useEffect(() => {
     fetchSavedScene();
   }, []);
@@ -140,31 +160,6 @@ const SceneViewRoomPage = () => {
             </button>
 
             <button
-              onClick={() => setConfirmClearModel(true)}
-              className={`
-                flex items-center justify-center gap-2
-                text-sm font-medium rounded-lg py-2 px-3
-                transition-all duration-200
-               bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 hover:border-red-500/50 text-red-400 cursor-pointer" 
-              `}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                className="w-4 h-4"
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <path
-                  d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              Clear Scene
-            </button>
-
-            <button
               className={`
                 flex items-center gap-1 justify-center
                 border font-semibold rounded-md py-2 px-4 text-sm
@@ -192,6 +187,57 @@ const SceneViewRoomPage = () => {
                 />
               </svg>
               {loading ? "Saving..." : "Save"}
+            </button>
+
+            <button
+              onClick={() => setConfirmClearModel(true)}
+              className={`
+                flex items-center justify-center gap-2
+                text-sm font-medium rounded-lg py-2 px-3
+                transition-all duration-200
+               bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 hover:border-red-500/50 text-red-400 cursor-pointer" 
+              `}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                className="w-4 h-4"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              Clear Scene
+            </button>
+
+
+            <button
+              onClick={handleOnSubscribe}
+              className={`
+                flex items-center justify-center gap-2
+                text-sm font-medium rounded-lg py-2 px-3
+                transition-all duration-200
+               bg-pink-700 hover:bg-pink-600 border border-pink-500/30 hover:border-pink-500/50 text-white cursor-pointer" 
+              `}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                className="w-4 h-4"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v4.764a1 1 0 01-1.447.894L15 12M5 18h8a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2z"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              Subscribe with 500 BDT
             </button>
           </div>
         </div>

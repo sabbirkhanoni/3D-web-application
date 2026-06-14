@@ -27,8 +27,19 @@ const userSchema = new mongoose.Schema(
     otpExpiry: {
       type: Date,
     },
+    
+    // subscription info
+    subscriptionStatus: {
+      type: String,
+      enum: ["free", "premium"],
+      default: "free",
+    },
+
+    subscriptionStartDate: Date,
+
+    subscriptionEndDate: Date,
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model("User", userSchema);
