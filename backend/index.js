@@ -5,7 +5,9 @@ import morgan from "morgan";
 import connectDB from "./config/connectDB.js";
 import authRoute from "./routes/auth.route.js";
 import sceneRoute from "./routes/scene.route.js";
+import subscriptionRoute from "./routes/SSLCommerzPayment.route.js";
 import session from "express-session";
+
 
 dotenv.config();
 const app = express();
@@ -54,6 +56,7 @@ app.get("/", (request, response) => {
 // Routes
 app.use("/api/auth", authRoute);
 app.use("/api/scene", sceneRoute);
+app.use("/api/subscription", subscriptionRoute);
 
 // First Connect to MongoDB then start the server
 connectDB().then(() => {
