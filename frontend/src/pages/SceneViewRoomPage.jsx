@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
-import AddObjectDialogBox from '../components/dashboard/AddObjectDialogBox'
+import AddObjectDialogBox from "../components/dashboard/AddObjectDialogBox";
 import toast from "react-hot-toast";
 import SceneRoom from "../components/scene/SceneRoom";
 import axios from "axios";
 import { useScene } from "../context/SceneContext";
+import { useAuth } from "../context/AuthContext";
 import AxiosToastError from "../utils/AxiosToastError";
-import ConfirmationModal from "../components/ConfirmationModel"
+import ConfirmationModal from "../components/ConfirmationModel";
 
 const SceneViewRoomPage = () => {
   const { objects, setObjects, selectedObjectId, setSelectedObjectId } =
     useScene();
 
+  const { user } = useAuth();
   const [openAddObjectDialogBox, setOpenAddObjectDialogBox] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isLoadingScene, setIsLoadingScene] = useState(false);
@@ -51,7 +53,7 @@ const SceneViewRoomPage = () => {
       }
 
       if (response.data.success) {
-        window.location.href = response.data.url // Redirect to the SSLCommerz payment gateway Provider
+        window.location.href = response.data.url; // Redirect to the SSLCommerz payment gateway Provider
         toast.success(response.data.message);
       }
     } catch (error) {
@@ -216,14 +218,17 @@ const SceneViewRoomPage = () => {
               Clear Scene
             </button>
 
-
             <button
               onClick={handleOnSubscribe}
               className={`
                 flex items-center justify-center gap-2
                 text-sm font-medium rounded-lg py-2 px-3
                 transition-all duration-200
-               bg-pink-700 hover:bg-pink-600 border border-pink-500/30 hover:border-pink-500/50 text-white cursor-pointer" 
+              text-white cursor-pointer ${
+                user && user.subscriptionStatus === "premium"
+                  ? "bg-green-500/50 border-green-600 cursor-not-allowed"
+                  : "bg-yellow-500 hover:bg-yellow-600 border-yellow-600"
+              }
               `}
             >
               <svg
@@ -239,7 +244,11 @@ const SceneViewRoomPage = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-              Subscribe with 500 BDT
+              {
+                user && user.subscriptionStatus === "premium"
+                  ? "Already Premium"
+                  : "Subscription with 500 BDT"
+              }
             </button>
           </div>
         </div>

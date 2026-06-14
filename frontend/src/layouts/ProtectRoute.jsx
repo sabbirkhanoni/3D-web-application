@@ -17,6 +17,7 @@ const ProtectRoute = ({ children }) => {
         );
   
         setUser(response.data.user);
+        console.log("User data from ProtectRoute:", response.data.user);
         setIsAuth(true);
       } catch (error) {
         setUser(null);

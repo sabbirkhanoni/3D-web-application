@@ -1,14 +1,13 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const UnauthorizedPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#05060f] via-[#222965] to-[#05060f] flex items-center justify-center">
       <div className="text-center">
-        
         {/* Icon */}
         <div className="mb-8">
           <div className="relative w-32 h-32 mx-auto">
-
             <div className="absolute inset-0 border-8 border-red-200/30 rounded-full"></div>
             <div className="absolute inset-0 border-8 border-transparent border-t-red-500 rounded-full animate-spin"></div>
 
@@ -28,7 +27,6 @@ const UnauthorizedPage = () => {
                 />
               </svg>
             </div>
-
           </div>
         </div>
 
@@ -39,13 +37,13 @@ const UnauthorizedPage = () => {
           <p className="text-red-200">
             You don’t have permission to view this page
           </p>
-          <button
-           onClick={() => window.history.back()}
-           className="mt-4 px-4 py-2 bg-red-500 text-white rounded">
-            Go Back
-          </button>
+          <Link
+            to="/login"
+            className="mt-4 px-4 py-2 bg-red-500/50 border-1 border-red-600 text-white rounded cursor-pointer hover:bg-red-500 transition-all duration-200 inline-block"
+          >
+            Please Properly Login to Continue
+          </Link>
         </div>
-
       </div>
     </div>
   );

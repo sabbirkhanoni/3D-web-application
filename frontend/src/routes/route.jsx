@@ -44,15 +44,15 @@ const router = createBrowserRouter([
         element: <ResetPasswordPage />,
       },
       {
-        path: "payment-success",
+        path: "success/:tran_id",
         element: <PaymentSuccessPage />,
       },
       {
-        path: "payment-failed",
+        path: "failed/:tran_id",
         element: <PaymentFailedPage />,
       },
       {
-        path: "payment-cancel",
+        path: "cancel/:tran_id",
         element: <PaymentCancelPage />,
       },
       {
