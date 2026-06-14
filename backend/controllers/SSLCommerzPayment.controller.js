@@ -50,8 +50,8 @@ export const subscriptionCancelController = async (request, response) => {
 };
 
 export const subscriptionIPNController = async (request, response) => {
-  const { tran_id } = request.body;
-  await subscriptionIPNService({ tran_id });
+  const { tran_id,  val_id, } = request.body;
+  await subscriptionIPNService({ tran_id,  val_id, });
   return response.status(200).json({
     success: true,
     message: "IPN processed successfully",

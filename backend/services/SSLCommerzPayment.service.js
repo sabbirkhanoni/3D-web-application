@@ -1,6 +1,7 @@
-import SSLCommerzPayment from 'sslcommerz-lts';
+import SSLCommerzPayment from "sslcommerz-lts";
 import Payment from "../models/payment.model.js";
 import User from "../models/user.model.js";
+import { validationSSLCommerzPayment } from "../validation/validationSSLCommerzPayment.js";
 
 const store_id = process.env.STORE_ID;
 const store_passwd = process.env.STORE_PASSWORD;
@@ -97,7 +98,8 @@ export const subscriptionCancelService = async ({ tran_id }) => {
   );
 };
 
-export const subscriptionIPNService = async ({ tran_id }) => {
+//Instant Payment Notification Service
+export const subscriptionIPNService = async ({ tran_id, val_id }) => {
   const payment = await Payment.findOne({
     transactionId: tran_id,
   });
@@ -108,6 +110,22 @@ export const subscriptionIPNService = async ({ tran_id }) => {
 
   if (payment.status === "success") {
     return "ALREADY_PROCESSED";
+  }
+
+  //Do not Belive Payment without check validation from SSLCommerz
+  const validationResponse = await validationSSLCommerzPayment(val_id);
+
+  if (!validationResponse) {
+    throw new Error("INVALID_PAYMENT");
+  }
+
+  const isValid =
+    validationResponse.status === "VALID" &&
+    validationResponse.tran_id === tran_id &&
+    validationResponse.currency_type === "BDT";
+
+  if (!isValid) {
+    throw new Error("INVALID_PAYMENT");
   }
 
   await Payment.findOneAndUpdate(
