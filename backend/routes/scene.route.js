@@ -1,8 +1,7 @@
-import { get } from "mongoose";
-import {createSceneController, getSceneByUserIdController, deleteSceneByUserIdController} from "../controllers/scene.controller.js";
-import {isAuthenticated} from "../middleware/isAuthenticated.js";
+import { createSceneController, getSceneByUserIdController, deleteSceneByUserIdController } from "../controllers/scene.controller.js";
+import { isAuthenticated } from "../middleware/isAuthenticated.js";
 
-import Router  from "express";
+import Router from "express";
 
 const router = Router();
 

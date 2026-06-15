@@ -19,6 +19,23 @@
    POST /api/auth/logout → Session destroyed
 ```
 
+---
+
+## Frontend Integration Notes
+
+- **Cookie-Based Authentication**: The API relies on server-side HTTP-only cookies to manage user sessions (`express-session`).
+- **CORS Requirements**: When integrating with a frontend application, you **must** configure your HTTP client (e.g., Axios or Fetch API) to include credentials:
+  - **Axios**: Set `withCredentials: true` in your request config or global defaults:
+    ```javascript
+    axios.defaults.withCredentials = true;
+    ```
+  - **Fetch API**: Set `credentials: 'include'` in the request options:
+    ```javascript
+    fetch(url, { credentials: 'include', ... })
+    ```
+
+---
+
 ## User Signup API
 
 ### Overview
@@ -868,6 +885,290 @@ curl -X DELETE http://localhost:5000/api/scene \
   "success": false
 }
 ```
+---
+
+## Initiate Premium Subscription API
+
+### Overview
+The Initiate Premium Subscription API allows authenticated users to start the process of upgrading to a premium membership. This endpoint generates a unique transaction ID, stores a pending payment record in the database, sets up the transaction payload (such as transaction amount, currency BDT, customer contact, and redirect endpoints), initiates the transaction with the SSLCommerz gateway, and returns the hosted gateway URL to redirect the user to complete their payment.
+
+---
+
+### Endpoint Details
+
+#### **POST** `/api/subscription/initiate`
+
+Initiates the premium subscription process and returns the payment gateway URL.
+
+---
+
+### Request
+
+#### **URL**
+```
+POST http://localhost:PORT/api/subscription/initiate
+```
+
+#### **Headers**
+```json
+{
+  "Content-Type": "application/json"
+}
+```
+
+#### **Request Body**
+```json
+{}
+```
+No body required. The user is identified via the active session.
+
+#### **Example Request**
+```bash
+curl -X POST http://localhost:5000/api/subscription/initiate \
+  -H "Content-Type: application/json"
+```
+
+---
+
+### Response
+
+#### **Success Response (200 OK)**
+```json
+{
+  "success": true,
+  "error": false,
+  "url": "https://sandbox.sslcommerz.com/gwprocess/v4/api.php?gkey=..."
+}
+```
+
+#### **Error Response (401 Unauthorized)**
+```json
+{
+  "message": "Unauthorized, Please login to access this resource",
+  "error": null,
+  "success": false
+}
+```
+
+#### **Error Response (500 Server Error)**
+```json
+{
+  "error": true,
+  "success": false,
+  "message": "You are already subscribed"
+}
+```
+
+---
+
+### SSLCommerz Sandbox Test Cards
+
+For local testing in sandbox/development mode, use the following test card details on the SSLCommerz payment page:
+
+| Card Type | Card Number | Expiry Date | CVV | PIN / OTP | Expected Result |
+|:---|:---|:---|:---|:---|:---|
+| **VISA** | `4012000000000002` | Any future date (e.g., `12/28`) | `123` | `1234` / `123456` | Success |
+| **Mastercard** | `5156700000000012` | Any future date (e.g., `12/28`) | `123` | `1234` / `123456` | Success |
+| **Failed Card** | `4012000000000005` | Any future date (e.g., `12/28`) | `123` | `1234` / `123456` | Failure |
+
+---
+
+---
+
+## Subscription Success Redirect
+
+### Overview
+Upon a successful payment transaction, SSLCommerz redirects the customer's browser to this backend endpoint. This endpoint updates the status of the transaction to `"success"`, flags the user as `"premium"`, records the subscription start timestamp, and redirects the client browser back to the frontend success landing page.
+
+---
+
+### Endpoint Details
+
+#### **GET / POST** `/api/subscription/success/:tran_id`
+
+Handles the successful checkout redirection from SSLCommerz.
+
+---
+
+### Request
+
+#### **URL**
+```
+GET http://localhost:PORT/api/subscription/success/:tran_id
+POST http://localhost:PORT/api/subscription/success/:tran_id
+```
+
+#### **URL Parameters**
+- `tran_id`: The unique transaction ID generated for the payment.
+
+---
+
+### Response
+
+#### **HTTP Redirect (302 Found)**
+Redirects to:
+```
+http://localhost:FRONTEND_PORT/success/:tran_id
+```
+
+---
+
+---
+
+## Subscription Failed Redirect
+
+### Overview
+If a payment transaction fails or is declined at the checkout gateway, SSLCommerz redirects the customer's browser to this backend endpoint. The endpoint marks the transaction status as `"failed"` and redirects the client browser to the frontend failed payment landing page.
+
+---
+
+### Endpoint Details
+
+#### **GET / POST** `/api/subscription/failed/:tran_id`
+
+Handles the failed checkout redirection from SSLCommerz.
+
+---
+
+### Request
+
+#### **URL**
+```
+GET http://localhost:PORT/api/subscription/failed/:tran_id
+POST http://localhost:PORT/api/subscription/failed/:tran_id
+```
+
+#### **URL Parameters**
+- `tran_id`: The unique transaction ID.
+
+---
+
+### Response
+
+#### **HTTP Redirect (302 Found)**
+Redirects to:
+```
+http://localhost:FRONTEND_PORT/failed/:tran_id
+```
+
+---
+
+---
+
+## Subscription Cancel Redirect
+
+### Overview
+If the customer cancels the checkout transaction on the gateway interface, SSLCommerz redirects the customer to this endpoint. The endpoint updates the payment record status to `"cancelled"` and redirects the client browser to the frontend cancel landing page.
+
+---
+
+### Endpoint Details
+
+#### **GET / POST** `/api/subscription/cancel/:tran_id`
+
+Handles the cancelled checkout redirection from SSLCommerz.
+
+---
+
+### Request
+
+#### **URL**
+```
+GET http://localhost:PORT/api/subscription/cancel/:tran_id
+POST http://localhost:PORT/api/subscription/cancel/:tran_id
+```
+
+#### **URL Parameters**
+- `tran_id`: The unique transaction ID.
+
+---
+
+### Response
+
+#### **HTTP Redirect (302 Found)**
+Redirects to:
+```
+http://localhost:FRONTEND_PORT/cancel/:tran_id
+```
+
+---
+
+---
+
+## Subscription Payment IPN Webhook
+
+### Overview
+The Instant Payment Notification (IPN) is a machine-to-machine post-back URL used by SSLCommerz to notify the merchant's server about transaction updates. This endpoint validates the payload using SSLCommerz payment validation API with the transaction validation ID (`val_id`), updates the payment status to `"success"`, and updates the user's account to `"premium"` status securely.
+
+---
+
+### Endpoint Details
+
+#### **POST** `/api/subscription/ipn`
+
+Handles incoming Instant Payment Notifications (IPN) from SSLCommerz.
+
+---
+
+### Request
+
+#### **URL**
+```
+POST http://localhost:PORT/api/subscription/ipn
+```
+
+#### **Headers**
+```json
+{
+  "Content-Type": "application/json"
+}
+```
+
+#### **Request Body**
+```json
+{
+  "tran_id": "string",
+  "val_id": "string"
+}
+```
+
+#### **Body Parameters**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `tran_id` | string | Yes | Unique transaction ID matching the payment record |
+| `val_id` | string | Yes | SSLCommerz verification ID to validate the payment |
+
+#### **Example Request**
+```bash
+curl -X POST http://localhost:5000/api/subscription/ipn \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tran_id": "SUB_1718468700000",
+    "val_id": "260615194500123AB"
+  }'
+```
+
+---
+
+### Response
+
+#### **Success Response (200 OK)**
+```json
+{
+  "success": true,
+  "message": "IPN processed successfully"
+}
+```
+
+#### **Error Response (500 Server Error)**
+```json
+{
+  "error": true,
+  "success": false,
+  "message": "INVALID_PAYMENT"
+}
+```
 
 ---
 
@@ -1007,6 +1308,33 @@ All API endpoints follow a consistent response format:
 - **Method:** DELETE
 - **URL:** `{{base_url}}/api/scene`
 
+#### 11. Initiate Subscription
+- **Method:** POST
+- **URL:** `{{base_url}}/api/subscription/initiate`
+
+#### 12. Success Redirect (Simulation)
+- **Method:** GET / POST
+- **URL:** `{{base_url}}/api/subscription/success/SUB_1234567890`
+
+#### 13. Failed Redirect (Simulation)
+- **Method:** GET / POST
+- **URL:** `{{base_url}}/api/subscription/failed/SUB_1234567890`
+
+#### 14. Cancel Redirect (Simulation)
+- **Method:** GET / POST
+- **URL:** `{{base_url}}/api/subscription/cancel/SUB_1234567890`
+
+#### 15. Instant Payment Notification (IPN) Webhook
+- **Method:** POST
+- **URL:** `{{base_url}}/api/subscription/ipn`
+- **Body:**
+```json
+{
+  "tran_id": "SUB_1234567890",
+  "val_id": "VAL_1234567890"
+}
+```
+
 ---
 
 ## Security Best Practices
@@ -1049,6 +1377,9 @@ STORE_PASSWORD=xxxxxxxxxxxx@ssl
   password: String (hashed, required),
   otp: String (optional, temporary),
   otpExpiry: Date (optional, temporary),
+  subscriptionStatus: String (enum: ["free", "premium"], default: "free"),
+  subscriptionStartDate: Date (optional),
+  subscriptionEndDate: Date (optional),
   createdAt: DateTime,
   updatedAt: DateTime
 }
@@ -1070,6 +1401,20 @@ STORE_PASSWORD=xxxxxxxxxxxx@ssl
       }
     }
   ],
+  createdAt: DateTime,
+  updatedAt: DateTime
+}
+```
+
+### Payment Schema
+```javascript
+{
+  _id: ObjectId,
+  userId: ObjectId (ref: "User", required),
+  amount: Number (required),
+  transactionId: String (required, unique),
+  status: String (enum: ["pending", "success", "failed", "cancel"], default: "pending"),
+  paymentMethod: String,
   createdAt: DateTime,
   updatedAt: DateTime
 }
