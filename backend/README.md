@@ -1,5 +1,24 @@
 # 3D VR Application Backend API
 
+## Complete Authentication Flow
+
+```
+1. User Signup
+   POST /api/auth/signup → User account created
+   
+2. User Login
+   POST /api/auth/login → Session created
+   
+3. Check Authentication
+   GET /api/auth/me → Verify user is logged in
+   
+4. Access Protected Resources
+   Use session to access dashboard and other resources
+   
+5. User Logout
+   POST /api/auth/logout → Session destroyed
+```
+
 ## User Signup API
 
 ### Overview
@@ -157,7 +176,6 @@ curl -X POST http://localhost:5000/api/auth/login \
 | `User not found` | Email is not registered | Sign up first or use correct email |
 | `Invalid password` | Password doesn't match | Check your password and try again |
 
----
 
 ---
 
@@ -227,8 +245,6 @@ curl -X POST http://localhost:5000/api/auth/logout \
 
 ---
 
----
-
 ## Get Me (Verify Auth) API
 
 ### Overview
@@ -274,7 +290,16 @@ curl -X GET http://localhost:5000/api/auth/me \
   "message": "User authenticated",
   "error": false,
   "success": true,
-  "userId": "507f1f77bcf86cd799439011"
+  "user": {
+        "_id": "6a21f8715d179e69a9dd9a65",
+        "name": "Md Sabbir Khan Oni",
+        "email": "mdsabbirkhanoni@gmail.com",
+        "createdAt": "2026-06-04T22:13:05.178Z",
+        "updatedAt": "2026-06-14T09:27:33.330Z",
+        "__v": 0,
+        "subscriptionStartDate": "2026-06-14T09:27:33.330Z",
+        "subscriptionStatus": "premium"
+    }
 }
 ```
 
@@ -287,6 +312,21 @@ curl -X GET http://localhost:5000/api/auth/me \
 }
 ```
 
+### Password Reset Flow
+
+```
+1. Forgot Password Request
+   POST /api/auth/forgot-password → OTP sent to email
+   
+2. Verify OTP
+   POST /api/auth/verify-otp → OTP validated
+   
+3. Reset Password
+   POST /api/auth/reset-password → Password updated
+   
+4. Login Again
+   POST /api/auth/login → User logs in with new password
+```
 
 ---
 
@@ -567,43 +607,266 @@ curl -X POST http://localhost:5000/api/auth/reset-password \
 
 ---
 
+
+
+## Save/Update Scene API
+
+### Overview
+The Save/Update Scene API allows authenticated users to save or update their 3D scene objects configuration. Since a user has a one-to-one relationship with their scene, this endpoint acts as an upsert operation.
+
 ---
 
-## Complete Authentication Flow
+### Endpoint Details
 
-### User Registration & Login Flow
+#### **POST** `/api/scene`
 
+Saves or updates the authenticated user's scene.
+
+---
+
+### Request
+
+#### **URL**
 ```
-1. User Signup
-   POST /api/auth/signup → User account created
-   
-2. User Login
-   POST /api/auth/login → Session created
-   
-3. Check Authentication
-   GET /api/auth/me → Verify user is logged in
-   
-4. Access Protected Resources
-   Use session to access dashboard and other resources
-   
-5. User Logout
-   POST /api/auth/logout → Session destroyed
+POST http://localhost:PORT/api/scene
 ```
 
-### Password Reset Flow
-
+#### **Headers**
+```json
+{
+  "Content-Type": "application/json"
+}
 ```
-1. Forgot Password Request
-   POST /api/auth/forgot-password → OTP sent to email
-   
-2. Verify OTP
-   POST /api/auth/verify-otp → OTP validated
-   
-3. Reset Password
-   POST /api/auth/reset-password → Password updated
-   
-4. Login Again
-   POST /api/auth/login → User logs in with new password
+
+#### **Request Body**
+```json
+{
+  "objects": [
+    {
+      "id": "string",
+      "type": "string",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    }
+  ]
+}
+```
+
+#### **Body Parameters**
+
+| Parameter | Type | Required | Description | Constraints |
+|-----------|------|----------|-------------|-------------|
+| `objects` | array | Yes | Array of 3D objects in the scene | Must be an array, length > 0 |
+| `objects[].id` | string | Yes | Unique identifier of the object in the scene | |
+| `objects[].type` | string | Yes | Type of 3D object (e.g., "cube", "sphere", "cone") | |
+| `objects[].position` | object | Yes | 3D coordinates of the object | Must contain `x`, `y`, `z` as numbers |
+
+#### **Example Request**
+```bash
+curl -X POST http://localhost:5000/api/scene \
+  -H "Content-Type: application/json" \
+  -d '{
+    "objects": [
+      {
+        "id": "obj-123",
+        "type": "cube",
+        "position": {
+          "x": 1.5,
+          "y": 0.0,
+          "z": -3.2
+        }
+      }
+    ]
+  }'
+```
+
+---
+
+### Response
+
+#### **Success Response (201 Created)**
+```json
+{
+  "message": "Scene saved successfully",
+  "error": false,
+  "success": true
+}
+```
+
+#### **Error Response (401 Unauthorized)**
+```json
+{
+  "message": "Unauthorized, Please login to access this resource",
+  "error": null,
+  "success": false
+}
+```
+
+#### **Error Response (400 Bad Request)**
+```json
+{
+  "message": "Failed to save scene",
+  "error": true,
+  "success": false
+}
+```
+
+#### **Error Response (500 Server Error)**
+```json
+{
+  "message": "Objects must be an array",
+  "error": true,
+  "success": false
+}
+```
+
+---
+
+## Get Scene API
+
+### Overview
+The Get Scene API retrieves the 3D scene objects configuration for the authenticated user.
+
+---
+
+### Endpoint Details
+
+#### **GET** `/api/scene`
+
+Retrieves the current authenticated user's scene configuration.
+
+---
+
+### Request
+
+#### **URL**
+```
+GET http://localhost:PORT/api/scene
+```
+
+#### **Headers**
+```json
+{
+  "Content-Type": "application/json"
+}
+```
+
+#### **Example Request**
+```bash
+curl -X GET http://localhost:5000/api/scene \
+  -H "Content-Type: application/json"
+```
+
+---
+
+### Response
+
+#### **Success Response (200 OK)**
+```json
+{
+  "message": "Scene retrieved successfully",
+  "error": false,
+  "success": true,
+  "data": {
+    "_id": "651a2b3c4d5e6f7g8h9i0j1k",
+    "userId": "651a2b3c4d5e6f7g8h9i0j1a",
+    "objects": [
+      {
+        "id": "obj-123",
+        "type": "cube",
+        "position": {
+          "x": 1.5,
+          "y": 0,
+          "z": -3.2
+        },
+        "_id": "651a2b3c4d5e6f7g8h9i0j1l"
+      }
+    ],
+    "createdAt": "2026-06-15T13:46:00.000Z",
+    "updatedAt": "2026-06-15T13:46:00.000Z",
+    "__v": 0
+  }
+}
+```
+
+#### **Error Response (401 Unauthorized)**
+```json
+{
+  "message": "Unauthorized, Please login to access this resource",
+  "error": null,
+  "success": false
+}
+```
+
+#### **Error Response (404 Not Found)**
+```json
+{
+  "message": "Build your scene",
+  "error": true,
+  "success": false
+}
+```
+
+---
+
+## Delete Scene API
+
+### Overview
+The Delete Scene API deletes the 3D scene objects configuration for the authenticated user.
+
+---
+
+### Endpoint Details
+
+#### **DELETE** `/api/scene`
+
+Deletes the authenticated user's scene configuration.
+
+---
+
+### Request
+
+#### **URL**
+```
+DELETE http://localhost:PORT/api/scene
+```
+
+#### **Headers**
+```json
+{
+  "Content-Type": "application/json"
+}
+```
+
+#### **Example Request**
+```bash
+curl -X DELETE http://localhost:5000/api/scene \
+  -H "Content-Type: application/json"
+```
+
+---
+
+### Response
+
+#### **Success Response (200 OK)**
+```json
+{
+  "message": "Scene deleted successfully",
+  "error": false,
+  "success": true
+}
+```
+
+#### **Error Response (401 Unauthorized)**
+```json
+{
+  "message": "Unauthorized, Please login to access this resource",
+  "error": null,
+  "success": false
+}
 ```
 
 ---
@@ -716,6 +979,34 @@ All API endpoints follow a consistent response format:
 - **Method:** POST
 - **URL:** `{{base_url}}/api/auth/logout`
 
+#### 8. Save/Update Scene
+- **Method:** POST
+- **URL:** `{{base_url}}/api/scene`
+- **Body:**
+```json
+{
+  "objects": [
+    {
+      "id": "obj-123",
+      "type": "cube",
+      "position": {
+        "x": 1,
+        "y": 2,
+        "z": 3
+      }
+    }
+  ]
+}
+```
+
+#### 9. Get Scene
+- **Method:** GET
+- **URL:** `{{base_url}}/api/scene`
+
+#### 10. Delete Scene
+- **Method:** DELETE
+- **URL:** `{{base_url}}/api/scene`
+
 ---
 
 ## Security Best Practices
@@ -740,6 +1031,9 @@ MONGODB_URI=mongodb://localhost:27017/vr-app
 SESSION_SECRET=your-secret-key
 RESEND_API=your-resend-api-key
 NODE_ENV=development
+
+STORE_ID=sslxxxxxxxxxxxxx
+STORE_PASSWORD=xxxxxxxxxxxx@ssl
 ```
 
 ---
@@ -755,6 +1049,27 @@ NODE_ENV=development
   password: String (hashed, required),
   otp: String (optional, temporary),
   otpExpiry: Date (optional, temporary),
+  createdAt: DateTime,
+  updatedAt: DateTime
+}
+```
+
+### Scene Schema
+```javascript
+{
+  _id: ObjectId,
+  userId: ObjectId (ref: "User", required, unique),
+  objects: [
+    {
+      id: String,
+      type: String,
+      position: {
+        x: Number,
+        y: Number,
+        z: Number
+      }
+    }
+  ],
   createdAt: DateTime,
   updatedAt: DateTime
 }
