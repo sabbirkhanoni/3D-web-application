@@ -3,7 +3,7 @@
 # 🧊 VR Scene Builder - VRSB
 ### A Full-Stack Interactive 3D Web Application
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Site-brightgreen?style=for-the-badge)](https://3-d-web-application.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Site-brightgreen?style=for-the-badge)](https://vrsb.vercel.app)
 [![GitHub Stars](https://img.shields.io/github/stars/sabbirkhanoni/3D-web-application?style=for-the-badge)](https://github.com/sabbirkhanoni/3D-web-application/stargazers)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 [![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)](https://reactjs.org/)
@@ -19,7 +19,7 @@
 
 **VR Scene Builder** is a full-stack interactive 3D web application where users can register, log in, enter a real-time 3D room, place and manipulate furniture objects (GLTF/GLB models), and persist their scene to MongoDB. It includes session-based authentication, OTP-based password reset via Resend email, SSLCommerz subscription payment integration, and a premium/free user tier system.
 
-> **Live Demo:** [https://3-d-web-application.vercel.app/](https://3-d-web-application.vercel.app/)
+> **Live Demo:** [https://vrsb.vercel.app](https://vrsb.vercel.app)
 
 ---
 
