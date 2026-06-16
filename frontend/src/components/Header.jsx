@@ -5,7 +5,7 @@ import Logo from '/vrsb.png';
 const Header = () => {
   return (
     <header
-      className="fixed top-0 inset-x-0 transition-all duration-300 backdrop-blur-sm bg-gray-500/70 px-6 mx-5 rounded-full backdrop:backdrop-blur-5xl mt-5"
+      className="fixed top-0 inset-x-0 transition-all duration-300 backdrop-blur-sm bg-gray-500/70 px-6 mx-5 rounded-full backdrop:backdrop-blur-5xl mt-5 z-100"
     >
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}

@@ -79,7 +79,7 @@ const SignupPage = () => {
 
   return (
     <>
-    <section className="min-h-screen bg-gradient-to-br from-[#05060f] via-[#222965] to-[#05060f]">
+    <section className=" h-full bg-gradient-to-br from-[#05060f] via-[#222965] to-[#05060f]">
       {/* Main Content */}
       <div className="container mx-auto px-4 pt-2 pb-5 flex items-center justify-center min-h-screen">
         <div className="w-full max-w-md">

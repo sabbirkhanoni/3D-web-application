@@ -11,8 +11,7 @@ const FOOTER_LINKS = {
 const Footer = () => {
   return (
     <footer
-      className="relative z-10 border-t"
-      style={{ background: '#080a18', borderColor: 'rgba(255,255,255,0.06)' }}
+      className="relative z-10 border-t bg-[#080a18]"
     >
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-2 md:grid-cols-6 gap-10 mb-16">

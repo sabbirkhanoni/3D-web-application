@@ -1,22 +1,21 @@
 import { Toaster } from "react-hot-toast";
 import { Outlet } from "react-router-dom";
 import Footer from "./components/Footer";
-import Header from "./components/Header";
+import ScrollToTop from "./utils/ScrollToTop";
 function App() {
-
   return (
-    <>
-     <main>
+    <div className="min-h-screen flex flex-col">
+      <ScrollToTop />
+      <main className="flex-1">
         <Outlet />
-     </main>
-     <Footer />
+      </main>
+
+      <Footer />
 
       <Toaster
         position="top-center"
         reverseOrder={false}
         gutter={8}
-        containerStyle={{}}
-        containerClassName=""
         toastOptions={{
           duration: 5000,
           style: {
@@ -25,8 +24,8 @@ function App() {
           },
         }}
       />
-    </>
-  )
+    </div>
+  );
 }
 
 export default App

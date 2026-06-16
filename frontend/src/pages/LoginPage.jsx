@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaRegEnvelope,
   FaLock,
@@ -19,7 +19,8 @@ const LoginPage = () => {
     password: "",
   });
 
-  //which help me to redirect to login page after successful registration
+
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -63,7 +64,7 @@ const LoginPage = () => {
   const validValueOfEveryInput = Object.values(data).every((item) => item);
 
   return (
-    <section className="mt-[-60px] min-h-screen bg-gradient-to-br from-[#05060f] via-[#222965] to-[#05060f]">
+    <section className="min-h-screen bg-gradient-to-br from-[#05060f] via-[#222965] to-[#05060f]">
       {/* Main Content */}
       <div className="container mx-auto px-4 pt-2 pb-5 flex items-center justify-center min-h-screen">
         <div className="w-full max-w-md">
