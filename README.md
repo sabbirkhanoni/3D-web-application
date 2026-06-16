@@ -20,6 +20,7 @@
 **VR Scene Builder** is a full-stack interactive 3D web application where users can register, log in, enter a real-time 3D room, place and manipulate furniture objects (GLTF/GLB models), and persist their scene to MongoDB. It includes session-based authentication, OTP-based password reset via Resend email, SSLCommerz subscription payment integration, and a premium/free user tier system.
 
 > **Live Demo:** [https://vrsb.vercel.app](https://vrsb.vercel.app)
+> ## Full detailed API docs are in [`backend/README.md`](./backend/README.md).
 
 ---
 
