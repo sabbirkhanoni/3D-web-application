@@ -1,20 +1,25 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import logo from '/vrsb.png';
 
 const UnauthorizedPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#05060f] via-[#222965] to-[#05060f] flex items-center justify-center">
       <div className="text-center">
+        <div className="mb-6">
+          <img src={logo} alt="VR Application Logo" className="w-30 h-30 mx-auto" />
+        </div>
         {/* Icon */}
         <div className="mb-8">
           <div className="relative w-32 h-32 mx-auto">
             <div className="absolute inset-0 border-8 border-red-200/30 rounded-full"></div>
             <div className="absolute inset-0 border-8 border-transparent border-t-red-500 rounded-full animate-spin"></div>
-
+            
             {/* Center */}
             <div className="absolute inset-4 bg-red-500 rounded-full animate-pulse flex items-center justify-center">
+              
               <svg
-                className="w-12 h-12 text-white"
+                className="w-5 h-5 text-white"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
