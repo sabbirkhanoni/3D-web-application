@@ -40,7 +40,7 @@ export const createSubscriptionPaymentService = async (userId) => {
 
     tran_id: transactionId,
     success_url: `${process.env.BACKEND_URL}/api/subscription/success/${transactionId}`,
-    fail_url: `${process.env.BACKEND_URL}/api/subscription/fail/${transactionId}`,
+    fail_url: `${process.env.BACKEND_URL}/api/subscription/failed/${transactionId}`,
     cancel_url: `${process.env.BACKEND_URL}/api/subscription/cancel/${transactionId}`,
     ipn_url: `${process.env.BACKEND_URL}/api/subscription/ipn`,
 
